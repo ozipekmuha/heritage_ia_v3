@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clonage vocal - HéritageAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #4CAF50;
+            --warning: #ff9800;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --voice-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Progress Steps */
+        .progress-container {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: -1;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 2px;
+            background: var(--voice-gradient);
+            transition: width 0.5s ease;
+            z-index: -1;
+        }
+
+        .step {
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #999;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .step.active {
+            background: var(--voice-gradient);
+            color: white;
+            border: none;
+            transform: scale(1.1);
+        }
+
+        .step.completed {
+            background: var(--success);
+            color: white;
+            border: none;
+        }
+
+        .step-label {
+            position: absolute;
+            top: 50px;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            color: #666;
+            transform: translateX(-50%);
+            left: 50%;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Recording Section */
+        .recording-section {
+            text-align: center;
+        }
+
+        .voice-visualizer {
+            height: 150px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wave-container {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 100%;
+        }
+
+        .wave-bar {
+            width: 4px;
+            background: var(--voice-gradient);
+            border-radius: 2px;
+            transition: height 0.1s ease;
+        }
+
+        .record-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--voice-gradient);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 3rem;
+            transition: all 0.3s ease;
+            position: relative;
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .record-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .record-button.recording {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 87, 108, 0.7); }
+            70% { box-shadow: 0 0 0 30px rgba(245, 87, 108, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 87, 108, 0); }
+        }
+
+        .recording-timer {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 1rem 0;
+        }
+
+        .recording-status {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        /* Script Section */
+        .script-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .script-text {
+            line-height: 2;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .script-text .current {
+            background: yellow;
+            padding: 0.2rem;
+            border-radius: 4px;
+        }
+
+        .script-text .completed {
+            color: var(--success);
+        }
+
+        /* Samples Grid */
+        .samples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .sample-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sample-card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .sample-card.completed {
+            border-color: var(--success);
+            background: #f0fff4;
+        }
+
+        .sample-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .sample-title {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .sample-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e0e0e0;
+        }
+
+        .sample-status.completed {
+            background: var(--success);
+        }
+
+        .sample-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 0.5rem;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .control-btn:hover {
+            background: #f8f9fa;
+            border-color: var(--secondary);
+        }
+
+        /* Side Panel */
+        .side-panel {
+            position: sticky;
+            top: 2rem;
+        }
+
+        .quality-meter {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .quality-score {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--voice-gradient) 0deg, var(--voice-gradient) 216deg, #e0e0e0 216deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            position: relative;
+        }
+
+        .score-inner {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .quality-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .quality-factors {
+            margin-top: 1.5rem;
+        }
+
+        .factor-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .factor-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .factor-bar {
+            width: 100px;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .factor-fill {
+            height: 100%;
+            background: var(--voice-gradient);
+            transition: width 0.5s ease;
+        }
+
+        /* Tips Section */
+        .tips-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .tip-card {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .tip-icon {
+            font-size: 1.5rem;
+        }
+
+        .tip-content h4 {
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .tip-content p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        /* Test Voice Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .modal-header {
+            margin-bottom: 2rem;
+        }
+
+        .voice-test-player {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .waveform-test {
+            height: 100px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50"><path d="M0,25 Q50,5 100,25 T200,25" stroke="%23667eea" stroke-width="2" fill="none"/></svg>');
+            background-size: cover;
+            margin-bottom: 1rem;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--voice-gradient);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .side-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .record-button {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+
+            .samples-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step-label {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">Configuration du clonage vocal</h1>
+            <p class="page-subtitle">Créez une réplique parfaite de votre voix pour donner vie à vos souvenirs</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="progress-line" style="width: 33%;"></div>
+                <div class="step completed">
+                    1
+                    <span class="step-label">Préparation</span>
+                </div>
+                <div class="step active">
+                    2
+                    <span class="step-label">Enregistrement</span>
+                </div>
+                <div class="step">
+                    3
+                    <span class="step-label">Traitement</span>
+                </div>
+                <div class="step">
+                    4
+                    <span class="step-label">Validation</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-section">
+                <!-- Recording Section -->
+                <div class="recording-section">
+                    <h2 style="margin-bottom: 1rem;">Enregistrement en cours</h2>
+                    <p class="recording-status">Lisez le texte ci-dessous d'une voix claire et naturelle</p>
+
+                    <div class="voice-visualizer">
+                        <div class="wave-container" id="waveContainer">
+                            <!-- Wave bars will be generated dynamically -->
+                        </div>
+                    </div>
+
+                    <button class="record-button" id="recordButton">
+                        🎤
+                    </button>
+
+                    <div class="recording-timer" id="recordingTimer">00:00</div>
+
+                    <!-- Script Section -->
+                    <div class="script-section">
+                        <div class="script-text">
+                            <span class="completed">Bonjour, je m'appelle Marie Dubois.</span>
+                            <span class="current">Aujourd'hui, je vais vous raconter l'histoire de ma vie,</span>
+                            <span>mes souvenirs les plus précieux, et les leçons que j'ai apprises en chemin. C'est avec beaucoup d'émotion que je partage ces moments avec vous, mes chers enfants et petits-enfants.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Samples Grid -->
+                <h3 style="margin-top: 3rem; margin-bottom: 1rem;">Échantillons vocaux</h3>
+                <div class="samples-grid">
+                    <div class="sample-card completed">
+                        <div class="sample-header">
+                            <span class="sample-title">Introduction</span>
+                            <span class="sample-status completed"></span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: #666;">Dialogue quotidien</p>
+                        <div class="sample-controls">
+                            <button class="control-btn">▶️</button>
+                            <button class="control-btn">🎤</button>
+                        </div>
+                    </div>
+
+                    <div class="sample-card">
+                        <div class="sample-header">
+                            <span class="sample-title">Lecture expressive</span>
+                            <span class="sample-status"></span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: #666;">Texte narratif</p>
+                        <div class="sample-controls">
+                            <button class="control-btn">▶️</button>
+                            <button class="control-btn">🎤</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary">Sauvegarder et continuer plus tard</button>
+                    <button class="btn btn-primary" onclick="openTestModal()">Tester ma voix clonée</button>
+                </div>
+            </div>
+
+            <!-- Side Panel -->
+            <div class="side-panel">
+                <!-- Quality Meter -->
+                <div class="quality-meter">
+                    <h3 style="margin-bottom: 1.5rem; text-align: center;">Qualité du clonage</h3>
+                    <div class="quality-score">
+                        <div class="score-circle">
+                            <div class="score-inner">72%</div>
+                        </div>
+                        <p class="quality-label">Bonne qualité</p>
+                    </div>
+                    <div class="quality-factors">
+                        <div class="factor-item">
+                            <span class="factor-label">Clarté</span>
+                            <div class="factor-bar">
+                                <div class="factor-fill" style="width: 85%;"></div>
+                            </div>
+                        </div>
+                        <div class="factor-item">
+                            <span class="factor-label">Variation tonale</span>
+                            <div class="factor-bar">
+                                <div class="factor-fill" style="width: 70%;"></div>
+                            </div>
+                        </div>
+                        <div class="factor-item">
+                            <span class="factor-label">Naturel</span>
+                            <div class="factor-bar">
+                                <div class="factor-fill" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                        <div class="factor-item">
+                            <span class="factor-label">Couverture émotionnelle</span>
+                            <div class="factor-bar">
+                                <div class="factor-fill" style="width: 60%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tips -->
+                <div class="tips-section">
+                    <h3 style="margin-bottom: 1rem;">Conseils pour un meilleur résultat</h3>
+                    
+                    <div class="tip-card">
+                        <span class="tip-icon">🎤</span>
+                        <div class="tip-content">
+                            <h4>Environnement calme</h4>
+                            <p>Enregistrez dans un endroit silencieux</p>
+                        </div>
+                    </div>
+
+                    <div class="tip-card">
+                        <span class="tip-icon">🗣️</span>
+                        <div class="tip-content">
+                            <h4>Parlez naturellement</h4>
+                            <p>Utilisez votre voix habituelle</p>
+                        </div>
+                    </div>
+
+                    <div class="tip-card">
+                        <span class="tip-icon">😊</span>
+                        <div class="tip-content">
+                            <h4>Variez les émotions</h4>
+                            <p>Exprimez différents sentiments</p>
+                        </div>
+                    </div>
+
+                    <div class="tip-card">
+                        <span class="tip-icon">⏱️</span>
+                        <div class="tip-content">
+                            <h4>Prenez votre temps</h4>
+                            <p>Pas de précipitation, qualité avant tout</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Voice Modal -->
+        <div class="modal" id="testModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Test de votre voix clonée</h2>
+                    <p style="color: #666; margin-top: 0.5rem;">Écoutez comment votre IA parlera avec votre voix</p>
+                </div>
+
+                <div class="voice-test-player">
+                    <div class="waveform-test"></div>
+                    <div class="player-controls">
+                        <button class="play-btn" id="playBtn">▶️</button>
+                        <div style="text-align: left; flex: 1; margin-left: 1rem;">
+                            <p style="font-weight: bold; margin-bottom: 0.25rem;">Exemple de message</p>
+                            <p style="font-size: 0.9rem; color: #666;">"Bonjour mes enfants, c'est maman. J'espère que vous allez bien..."</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; margin-bottom: 2rem;">
+                    <p style="font-size: 0.9rem; color: #666;">💡 La qualité s'améliorera avec plus d'échantillons vocaux</p>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="closeTestModal()">Continuer l'enregistrement</button>
+                    <button class="btn btn-primary">Valider et terminer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate wave bars
+        const waveContainer = document.getElementById('waveContainer');
+        for (let i = 0; i < 50; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'wave-bar';
+            bar.style.height = '20%';
+            waveContainer.appendChild(bar);
+        }
+
+        // Animate wave bars
+        let animationFrame;
+        let isRecording = false;
+
+        function animateWaves() {
+            const bars = waveContainer.querySelectorAll('.wave-bar');
+            bars.forEach((bar, index) => {
+                const height = Math.random() * 80 + 20;
+                bar.style.height = height + '%';
+            });
+
+            if (isRecording) {
+                animationFrame = requestAnimationFrame(animateWaves);
+            }
+        }
+
+        // Recording functionality
+        const recordButton = document.getElementById('recordButton');
+        const recordingTimer = document.getElementById('recordingTimer');
+        let recordingStartTime;
+        let timerInterval;
+
+        recordButton.addEventListener('click', () => {
+            if (!isRecording) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        });
+
+        function startRecording() {
+            isRecording = true;
+            recordButton.classList.add('recording');
+            recordButton.textContent = '⏹️';
+            recordingStartTime = Date.now();
+            
+            // Start timer
+            timerInterval = setInterval(updateTimer, 100);
+            
+            // Start wave animation
+            animateWaves();
+            
+            // Update UI
+            document.querySelector('.recording-status').textContent = 'Enregistrement en cours...';
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            recordButton.classList.remove('recording');
+            recordButton.textContent = '🎤';
+            
+            // Stop timer
+            clearInterval(timerInterval);
+            
+            // Stop animation
+            cancelAnimationFrame(animationFrame);
+            
+            // Reset waves
+            const bars = waveContainer.querySelectorAll('.wave-bar');
+            bars.forEach(bar => bar.style.height = '20%');
+            
+            // Update UI
+            document.querySelector('.recording-status').textContent = 'Enregistrement terminé - Cliquez pour recommencer';
+            
+            // Update quality score
+            updateQualityScore();
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            recordingTimer.textContent = `${minutes}:${seconds}`;
+        }
+
+        // Update quality score
+        function updateQualityScore() {
+            const currentScore = parseInt(document.querySelector('.score-inner').textContent);
+            const newScore = Math.min(currentScore + 5, 95);
+            
+            document.querySelector('.score-inner').textContent = newScore + '%';
+            
+            // Update progress circle
+            const degrees = (newScore / 100) * 360;
+            document.querySelector('.score-circle').style.background = 
+                `conic-gradient(var(--voice-gradient) 0deg, var(--voice-gradient) ${degrees}deg, #e0e0e0 ${degrees}deg)`;
+            
+            // Update factors
+            document.querySelectorAll('.factor-fill').forEach(fill => {
+                const currentWidth = parseInt(fill.style.width);
+                const newWidth = Math.min(currentWidth + Math.random() * 10, 95);
+                fill.style.width = newWidth + '%';
+            });
+        }
+
+        // Sample controls
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const text = this.textContent;
+                
+                if (text === '🎤') {
+                    // Start recording for this sample
+                    this.textContent = '⏹️';
+                    this.style.background = 'var(--accent)';
+                    this.style.color = 'white';
+                    
+                    setTimeout(() => {
+                        this.textContent = '✓';
+                        this.style.background = 'var(--success)';
+                        const card = this.closest('.sample-card');
+                        card.classList.add('completed');
+                        card.querySelector('.sample-status').classList.add('completed');
+                    }, 3000);
+                } else if (text === '▶️') {
+                    // Play sample
+                    this.textContent = '⏸️';
+                    setTimeout(() => {
+                        this.textContent = '▶️';
+                    }, 2000);
+                } else if (text === '🔄') {
+                    // Re-record
+                    const card = this.closest('.sample-card');
+                    card.classList.remove('completed');
+                    card.querySelector('.sample-status').classList.remove('completed');
+                    const recordBtn = card.querySelector('.control-btn:last-child');
+                    recordBtn.textContent = '🎤';
+                    recordBtn.style.background = 'white';
+                    recordBtn.style.color = 'var(--dark)';
+                }
+            });
+        });
+
+        // Modal functions
+        function openTestModal() {
+            document.getElementById('testModal').classList.add('active');
+        }
+
+        function closeTestModal() {
+            document.getElementById('testModal').classList.remove('active');
+        }
+
+        // Play button in modal
+        const playBtn = document.getElementById('playBtn');
+        let isPlaying = false;
+
+        playBtn.addEventListener('click', () => {
+            if (!isPlaying) {
+                playBtn.textContent = '⏸️';
+                isPlaying = true;
+                
+                // Simulate playback
+                setTimeout(() => {
+                    playBtn.textContent = '▶️';
+                    isPlaying = false;
+                }, 5000);
+            } else {
+                playBtn.textContent = '▶️';
+                isPlaying = false;
+            }
+        });
+
+        // Script highlighting
+        let scriptIndex = 0;
+        const scriptSpans = document.querySelectorAll('.script-text span');
+
+        function highlightNextScript() {
+            if (scriptIndex < scriptSpans.length && isRecording) {
+                scriptSpans.forEach(span => span.classList.remove('current'));
+                scriptSpans[scriptIndex].classList.add('current');
+                
+                if (scriptIndex > 0) {
+                    scriptSpans[scriptIndex - 1].classList.add('completed');
+                }
+                
+                scriptIndex++;
+                setTimeout(highlightNextScript, 5000); // Move to next phrase every 5 seconds
+            }
+        }
+
+        // Start highlighting when recording starts
+        recordButton.addEventListener('click', () => {
+            if (isRecording && scriptIndex === 0) {
+                highlightNextScript();
+            }
+        });
+
+        // Progress steps
+        const steps = document.querySelectorAll('.step');
+        let currentStep = 2;
+
+        function updateProgress() {
+            const progressLine = document.querySelector('.progress-line');
+            const progressPercentage = ((currentStep - 1) / (steps.length - 1)) * 100;
+            progressLine.style.width = progressPercentage + '%';
+            
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index < currentStep - 1) {
+                    step.classList.add('completed');
+                } else if (index === currentStep - 1) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                recordButton.click();
+            }
+        });
+
+        // Auto-save indication
+        setInterval(() => {
+            if (isRecording) {
+                console.log('Auto-saving voice data...');
+            }
+        }, 30000); // Every 30 seconds
+    </script>
+    </script>
+</body>
+</html>

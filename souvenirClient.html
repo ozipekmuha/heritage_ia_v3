@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes souvenirs - HéritageAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #4CAF50;
+            --warning: #ff9800;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --memory-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 3rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .filter-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-chip:hover {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+        }
+
+        .filter-chip.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .view-btn {
+            padding: 0.5rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .view-btn.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        /* Memories Grid */
+        .memories-container {
+            margin-top: 2rem;
+        }
+
+        .memories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .memory-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .memory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .memory-media {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--memory-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            position: relative;
+        }
+
+        .memory-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .memory-type-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .memory-content {
+            padding: 1.5rem;
+        }
+
+        .memory-date {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .memory-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .memory-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .memory-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .memory-tag {
+            background: #f0f0f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .memory-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .memory-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .action-btn:hover {
+            color: var(--secondary);
+            transform: scale(1.1);
+        }
+
+        .action-btn.liked {
+            color: var(--accent);
+        }
+
+        .action-count {
+            font-size: 0.9rem;
+        }
+
+        .memory-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .author-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        /* Timeline View */
+        .timeline-view {
+            display: none;
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+
+        .timeline-year {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 2rem 0 1rem;
+            position: relative;
+        }
+
+        .timeline-year::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--secondary);
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+            margin-left: 1rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 2rem;
+            width: 10px;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 50%;
+        }
+
+        /* Map View */
+        .map-view {
+            display: none;
+            height: 600px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23f0f0f0" width="1200" height="600"/><path d="M300,200 Q600,100 900,200 T1200,300" stroke="%23ddd" stroke-width="2" fill="none"/><circle cx="400" cy="250" r="8" fill="%233498db"/><circle cx="600" cy="180" r="8" fill="%233498db"/><circle cx="800" cy="220" r="8" fill="%233498db"/></svg>');
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 1.5rem;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .map-control-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .map-control-btn:hover {
+            border-color: var(--secondary);
+        }
+
+        /* Memory Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .modal-close:hover {
+            background: #f0f0f0;
+            color: var(--primary);
+        }
+
+        .modal-media {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            background: var(--memory-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+        }
+
+        .modal-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-header {
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .modal-content-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .people-list {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .person-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f0f0f0;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .person-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            border-top: 2px solid #f0f0f0;
+            padding-top: 2rem;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: none;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .comment {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .comment-text {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        /* Loading State */
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+
+            .search-container {
+                max-width: 100%;
+                order: 3;
+            }
+
+            .filters-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .view-toggle {
+                margin-left: 0;
+                justify-content: center;
+            }
+
+            .memories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-content {
+                margin: 0;
+                border-radius: 0;
+                height: 100vh;
+                max-height: 100vh;
+            }
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1 class="page-title">Mes souvenirs</h1>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Rechercher un souvenir...">
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="window.location.href='create-memory.html'">
+                    <span>➕</span> Nouveau souvenir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-value">247</div>
+                <div class="stat-label">Total des souvenirs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📸</div>
+                <div class="stat-value">182</div>
+                <div class="stat-label">Photos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎥</div>
+                <div class="stat-value">34</div>
+                <div class="stat-label">Vidéos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎙️</div>
+                <div class="stat-value">31</div>
+                <div class="stat-label">Enregistrements</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value">15</div>
+                <div class="stat-label">Contributeurs</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <span class="filter-label">Type :</span>
+                <div class="filter-chips">
+                    <button class="filter-chip active">Tous</button>
+                    <button class="filter-chip">Photos</button>
+                    <button class="filter-chip">Vidéos</button>
+                    <button class="filter-chip">Audio</button>
+                    <button class="filter-chip">Texte</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Période :</span>
+                <div class="filter-chips">
+                    <button class="filter-chip">Cette année</button>
+                    <button class="filter-chip">2023</button>
+                    <button class="filter-chip">2022</button>
+                    <button class="filter-chip">Plus ancien</button>
+                </div>
+            </div>
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="changeView('grid')">⊞</button>
+                <button class="view-btn" onclick="changeView('timeline')">📅</button>
+                <button class="view-btn" onclick="changeView('map')">🗺️</button>
+            </div>
+        </div>
+
+        <!-- Memories Container -->
+        <div class="memories-container">
+            <!-- Grid View -->
+            <div class="memories-grid" id="gridView">
+                <!-- Memory Card 1 -->
+                <div class="memory-card" onclick="openMemoryDetail()">
+                    <div class="memory-media">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'><rect fill='%23e3f2fd' width='400' height='200'/><text x='50%' y='50%' text-anchor='middle' dy='.3em' fill='%233498db' font-family='Arial' font-size='20'>Santorin 2019</text></svg>" alt="Santorin">
+                        <span class="memory-type-badge">📸 Photo</span>
+                    </div>
+                    <div class="memory-content">
+                        <div class="memory-date">15 juillet 2019</div>
+                        <h3 class="memory-title">Coucher de soleil à Santorin</h3>
+                        <p class="memory-description">Un moment magique partagé en famille devant le plus beau coucher de soleil de notre vie. Les enfants étaient émerveillés...</p>
+                        <div class="memory-tags">
+                            <span class="memory-tag">Vacances</span>
+                            <span class="memory-tag">Famille</span>
+                            <span class="memory-tag">Grèce</span>
+                        </div>
+                        <div class="memory-footer">
+                            <div class="memory-actions">
+                                <button class="action-btn liked">
+                                    <span>❤️</span>
+                                    <span class="action-count">12</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>💬</span>
+                                    <span class="action-count">5</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>↗️</span>
+                                </button>
+                            </div>
+                            <div class="memory-author">
+                                <span class="author-avatar">M</span>
+                                <span>Marie</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Card 2 -->
+                <div class="memory-card">
+                    <div class="memory-media">
+                        🎥
+                        <span class="memory-type-badge">🎥 Vidéo</span>
+                    </div>
+                    <div class="memory-content">
+                        <div class="memory-date">25 décembre 2023</div>
+                        <h3 class="memory-title">Noël en famille</h3>
+                        <p class="memory-description">La joie des enfants en ouvrant leurs cadeaux. Grand-mère nous a raconté ses souvenirs de Noël d'antan...</p>
+                        <div class="memory-tags">
+                            <span class="memory-tag">Noël</span>
+                            <span class="memory-tag">Traditions</span>
+                            <span class="memory-tag">Joie</span>
+                        </div>
+                        <div class="memory-footer">
+                            <div class="memory-actions">
+                                <button class="action-btn">
+                                    <span>❤️</span>
+                                    <span class="action-count">8</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>💬</span>
+                                    <span class="action-count">3</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>↗️</span>
+                                </button>
+                            </div>
+                            <div class="memory-author">
+                                <span class="author-avatar">P</span>
+                                <span>Pierre</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Card 3 -->
+                <div class="memory-card">
+                    <div class="memory-media">
+                        🎙️
+                        <span class="memory-type-badge">🎙️ Audio</span>
+                    </div>
+                    <div class="memory-content">
+                        <div class="memory-date">3 mars 2024</div>
+                        <h3 class="memory-title">Histoire de notre rencontre</h3>
+                        <p class="memory-description">J'ai enregistré l'histoire de comment j'ai rencontré votre père. C'était lors d'une soirée étudiante en 1985...</p>
+                        <div class="memory-tags">
+                            <span class="memory-tag">Histoire d'amour</span>
+                            <span class="memory-tag">Jeunesse</span>
+                        </div>
+                        <div class="memory-footer">
+                            <div class="memory-actions">
+                                <button class="action-btn liked">
+                                    <span>❤️</span>
+                                    <span class="action-count">15</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>💬</span>
+                                    <span class="action-count">7</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>↗️</span>
+                                </button>
+                            </div>
+                            <div class="memory-author">
+                                <span class="author-avatar">👤</span>
+                                <span>Vous</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Card 4 -->
+                <div class="memory-card">
+                    <div class="memory-media">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'><rect fill='%23fff3e0' width='400' height='200'/><text x='50%' y='50%' text-anchor='middle' dy='.3em' fill='%23ff9800' font-family='Arial' font-size='20'>Anniversaire Sophie</text></svg>" alt="Anniversaire">
+                        <span class="memory-type-badge">📸 Photo</span>
+                    </div>
+                    <div class="memory-content">
+                        <div class="memory-date">10 septembre 2023</div>
+                        <h3 class="memory-title">Les 18 ans de Sophie</h3>
+                        <p class="memory-description">Une journée inoubliable pour célébrer la majorité de notre fille. Tous ses amis étaient présents...</p>
+                        <div class="memory-tags">
+                            <span class="memory-tag">Anniversaire</span>
+                            <span class="memory-tag">Milestone</span>
+                            <span class="memory-tag">Sophie</span>
+                        </div>
+                        <div class="memory-footer">
+                            <div class="memory-actions">
+                                <button class="action-btn">
+                                    <span>❤️</span>
+                                    <span class="action-count">20</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>💬</span>
+                                    <span class="action-count">12</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>↗️</span>
+                                </button>
+                            </div>
+                            <div class="memory-author">
+                                <span class="author-avatar">S</span>
+                                <span>Sophie</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Card 5 -->
+                <div class="memory-card">
+                    <div class="memory-media">
+                        ✍️
+                        <span class="memory-type-badge">✍️ Texte</span>
+                    </div>
+                    <div class="memory-content">
+                        <div class="memory-date">15 janvier 2024</div>
+                        <h3 class="memory-title">Mes conseils pour la vie</h3>
+                        <p class="memory-description">J'ai écrit une lettre avec tous les conseils que je veux transmettre à mes enfants. Des leçons apprises au fil des années...</p>
+                        <div class="memory-tags">
+                            <span class="memory-tag">Conseils</span>
+                            <span class="memory-tag">Sagesse</span>
+                            <span class="memory-tag">Transmission</span>
+                        </div>
+                        <div class="memory-footer">
+                            <div class="memory-actions">
+                                <button class="action-btn liked">
+                                    <span>❤️</span>
+                                    <span class="action-count">25</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>💬</span>
+                                    <span class="action-count">10</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>↗️</span>
+                                </button>
+                            </div>
+                            <div class="memory-author">
+                                <span class="author-avatar">👤</span>
+                                <span>Vous</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Card 6 -->
+                <div class="memory-card">
+                    <div class="memory-media">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'><rect fill='%23e8f5e9' width='400' height='200'/><text x='50%' y='50%' text-anchor='middle' dy='.3em' fill='%234CAF50' font-family='Arial' font-size='20'>Mariage 1995</text></svg>" alt="Mariage">
+                        <span class="memory-type-badge">📸 Photo</span>
+                    </div>
+                    <div class="memory-content">
+                        <div class="memory-date">20 mai 1995</div>
+                        <h3 class="memory-title">Notre mariage</h3>
+                        <p class="memory-description">Le plus beau jour de notre vie. La cérémonie à l'église Saint-Michel, suivie d'une réception au château...</p>
+                        <div class="memory-tags">
+                            <span class="memory-tag">Mariage</span>
+                            <span class="memory-tag">Amour</span>
+                            <span class="memory-tag">Début</span>
+                        </div>
+                        <div class="memory-footer">
+                            <div class="memory-actions">
+                                <button class="action-btn liked">
+                                    <span>❤️</span>
+                                    <span class="action-count">32</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>💬</span>
+                                    <span class="action-count">15</span>
+                                </button>
+                                <button class="action-btn">
+                                    <span>↗️</span>
+                                </button>
+                            </div>
+                            <div class="memory-author">
+                                <span class="author-avatar">M</span>
+                                <span>Marie</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline View -->
+            <div class="timeline-view" id="timelineView">
+                <div class="timeline-line"></div>
+                
+                <div class="timeline-year">2024</div>
+                <div class="timeline-item">
+                    <h3>Histoire de notre rencontre</h3>
+                    <p>3 mars - Enregistrement audio</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Mes conseils pour la vie</h3>
+                    <p>15 janvier - Texte</p>
+                </div>
+
+                <div class="timeline-year">2023</div>
+                <div class="timeline-item">
+                    <h3>Noël en famille</h3>
+                    <p>25 décembre - Vidéo</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Les 18 ans de Sophie</h3>
+                    <p>10 septembre - Photos</p>
+                </div>
+
+                <div class="timeline-year">2019</div>
+                <div class="timeline-item">
+                    <h3>Coucher de soleil à Santorin</h3>
+                    <p>15 juillet - Photos</p>
+                </div>
+
+                <div class="timeline-year">1995</div>
+                <div class="timeline-item">
+                    <h3>Notre mariage</h3>
+                    <p>20 mai - Photos</p>
+                </div>
+            </div>
+
+            <!-- Map View -->
+            <div class="map-view" id="mapView">
+                <div class="map-placeholder">
+                    🗺️ Carte interactive des souvenirs
+                </div>
+                <div class="map-controls">
+                    <button class="map-control-btn">➕</button>
+                    <button class="map-control-btn">➖</button>
+                    <button class="map-control-btn">📍</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="window.location.href='create-memory.html'">
+        ➕
+    </button>
+
+    <!-- Memory Detail Modal -->
+    <div class="modal" id="memoryModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeMemoryDetail()">×</button>
+            
+            <div class="modal-media">
+                <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'><rect fill='%23e3f2fd' width='800' height='400'/><text x='50%' y='50%' text-anchor='middle' dy='.3em' fill='%233498db' font-family='Arial' font-size='40'>Santorin 2019</text></svg>" alt="Santorin">
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h2 class="modal-title">Coucher de soleil à Santorin</h2>
+                    <div class="modal-meta">
+                        <span>📅 15 juillet 2019</span>
+                        <span>📍 Oia, Santorin, Grèce</span>
+                        <span>👤 Par Marie</span>
+                    </div>
+                </div>
+
+                <div class="modal-content-section">
+                    <h3 class="section-title">Description</h3>
+                    <p>Un moment magique partagé en famille devant le plus beau coucher de soleil de notre vie. Les enfants étaient émerveillés par les couleurs orangées qui se reflétaient sur les maisons blanches d'Oia. Ce voyage en Grèce restera gravé dans nos mémoires comme l'un des plus beaux moments passés ensemble.</p>
+                    <p>Nous avions trouvé le spot parfait après avoir marché dans les ruelles étroites. Sophie a pris des dizaines de photos, Thomas filmait tout, et nous, on savourait simplement l'instant présent.</p>
+                </div>
+
+                <div class="modal-content-section">
+                    <h3 class="section-title">Personnes présentes</h3>
+                    <div class="people-list">
+                        <div class="person-chip">
+                            <span class="person-avatar">M</span>
+                            <span>Marie</span>
+                        </div>
+                        <div class="person-chip">
+                            <span class="person-avatar">P</span>
+                            <span>Pierre</span>
+                        </div>
+                        <div class="person-chip">
+                            <span class="person-avatar">S</span>
+                            <span>Sophie</span>
+                        </div>
+                        <div class="person-chip">
+                            <span class="person-avatar">T</span>
+                            <span>Thomas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-content-section">
+                    <h3 class="section-title">Tags</h3>
+                    <div class="memory-tags">
+                        <span class="memory-tag">Vacances</span>
+                        <span class="memory-tag">Famille</span>
+                        <span class="memory-tag">Grèce</span>
+                        <span class="memory-tag">Coucher de soleil</span>
+                        <span class="memory-tag">Été 2019</span>
+                    </div>
+                </div>
+
+                <div class="comments-section">
+                    <h3 class="section-title">Commentaires</h3>
+                    
+                    <div class="comment-form">
+                        <textarea class="comment-input" placeholder="Ajouter un commentaire..." rows="2"></textarea>
+                        <button class="btn btn-primary">Publier</button>
+                    </div>
+
+                    <div class="comment-list">
+                        <div class="comment">
+                            <span class="comment-avatar">S</span>
+                            <div class="comment-content">
+                                <div class="comment-author">Sophie</div>
+                                <div class="comment-text">C'était vraiment le plus beau coucher de soleil que j'ai jamais vu ! Je me souviens encore de l'odeur de la mer et du vent dans mes cheveux. ❤️</div>
+                                <div class="comment-time">Il y a 2 jours</div>
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <span class="comment-avatar">T</span>
+                            <div class="comment-content">
+                                <div class="comment-author">Thomas</div>
+                                <div class="comment-text">J'ai encore la vidéo sur mon téléphone ! On devrait la regarder tous ensemble à Noël.</div>
+                                <div class="comment-time">Il y a 5 jours</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // View switching
+        function changeView(view) {
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('gridView').style.display = 'none';
+            document.getElementById('timelineView').style.display = 'none';
+            document.getElementById('mapView').style.display = 'none';
+
+            switch(view) {
+                case 'grid':
+                    document.getElementById('gridView').style.display = 'grid';
+                    break;
+                case 'timeline':
+                    document.getElementById('timelineView').style.display = 'block';
+                    break;
+                case 'map':
+                    document.getElementById('mapView').style.display = 'block';
+                    break;
+            }
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                const parent = this.parentElement;
+                if (parent.querySelector('.active') !== this) {
+                    parent.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                }
+                this.classList.toggle('active');
+                
+                // Filter logic would go here
+                console.log('Filtering by:', this.textContent);
+                applyFilters();
+            });
+        });
+
+        function applyFilters() {
+            // Simulate filtering
+            const cards = document.querySelectorAll('.memory-card');
+            cards.forEach(card => {
+                card.style.opacity = '0.5';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                }, 300);
+            });
+        }
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const searchTerm = this.value.toLowerCase();
+                console.log('Searching for:', searchTerm);
+                
+                // Search logic would go here
+                if (searchTerm) {
+                    document.querySelectorAll('.memory-card').forEach(card => {
+                        const title = card.querySelector('.memory-title').textContent.toLowerCase();
+                        const description = card.querySelector('.memory-description').textContent.toLowerCase();
+                        
+                        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                } else {
+                    document.querySelectorAll('.memory-card').forEach(card => {
+                        card.style.display = 'block';
+                    });
+                }
+            }, 300);
+        });
+
+        // Like functionality
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                if (this.innerHTML.includes('❤️')) {
+                    this.classList.toggle('liked');
+                    const count = this.querySelector('.action-count');
+                    const currentCount = parseInt(count.textContent);
+                    
+                    if (this.classList.contains('liked')) {
+                        count.textContent = currentCount + 1;
+                    } else {
+                        count.textContent = currentCount - 1;
+                    }
+                }
+            });
+        });
+
+        // Memory detail modal
+        function openMemoryDetail() {
+            document.getElementById('memoryModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMemoryDetail() {
+            document.getElementById('memoryModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on outside click
+        document.getElementById('memoryModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeMemoryDetail();
+            }
+        });
+
+        // Comment submission
+        document.querySelector('.comment-form button').addEventListener('click', function() {
+            const input = document.querySelector('.comment-input');
+            const text = input.value.trim();
+            
+            if (text) {
+                const comment = document.createElement('div');
+                comment.className = 'comment';
+                comment.innerHTML = `
+                    <span class="comment-avatar">👤</span>
+                    <div class="comment-content">
+                        <div class="comment-author">Vous</div>
+                        <div class="comment-text">${text}</div>
+                        <div class="comment-time">À l'instant</div>
+                    </div>
+                `;
+                
+                document.querySelector('.comment-list').insertBefore(comment, document.querySelector('.comment-list').firstChild);
+                input.value = '';
+            }
+        });
+
+        // Timeline scroll animation
+        if (window.IntersectionObserver) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateX(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                item.style.transition = 'all 0.5s ease';
+                observer.observe(item);
+            });
+        }
+
+        // Infinite scroll simulation
+        let page = 1;
+        let loading = false;
+
+        window.addEventListener('scroll', () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 && !loading) {
+                loading = true;
+                loadMoreMemories();
+            }
+        });
+
+        function loadMoreMemories() {
+            console.log('Loading more memories...');
+            
+            // Simulate loading
+            setTimeout(() => {
+                // Would load more memories here
+                page++;
+                loading = false;
+            }, 1000);
+        }
+
+        // Stats animation
+        function animateStats() {
+            document.querySelectorAll('.stat-value').forEach(stat => {
+                const finalValue = parseInt(stat.textContent);
+                let currentValue = 0;
+                const increment = finalValue / 30;
+                
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        currentValue = finalValue;
+                        clearInterval(timer);
+                    }
+                    stat.textContent = Math.floor(currentValue);
+                }, 30);
+            });
+        }
+
+        // Animate stats on page load
+        animateStats();
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('memoryModal').classList.contains('active')) {
+                closeMemoryDetail();
+            }
+            if (e.key === 'n' && e.ctrlKey) {
+                e.preventDefault();
+                window.location.href = 'create-memory.html';
+            }
+        });
+    </script>
+</body>
+</html>

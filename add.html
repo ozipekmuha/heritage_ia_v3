@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un souvenir - HéritageAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #4CAF50;
+            --warning: #ff9800;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+        }
+
+        .page-title {
+            flex: 1;
+            text-align: center;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: #666;
+        }
+
+        /* Memory Type Selection */
+        .memory-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .memory-type {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .memory-type:hover {
+            border-color: var(--secondary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .memory-type.active {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+        }
+
+        .memory-type-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .memory-type-label {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Creation Form */
+        .creation-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 3px dashed #e0e0e0;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f8f9fa;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .upload-area:hover {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--secondary);
+            background: #e3f2fd;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Text Editor */
+        .text-editor {
+            margin-bottom: 2rem;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px 10px 0 0;
+            flex-wrap: wrap;
+        }
+
+        .editor-button {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .editor-button:hover {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .editor-button.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .text-area {
+            min-height: 300px;
+            padding: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 0 0 10px 10px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            resize: vertical;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .text-area:focus {
+            border-color: var(--secondary);
+        }
+
+        /* Audio Recorder */
+        .audio-recorder {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .record-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            margin: 0 auto 1rem;
+        }
+
+        .record-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .record-button.recording {
+            background: var(--success);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+
+        .recording-time {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .audio-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        /* Preview Area */
+        .preview-area {
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f8f9fa;
+            aspect-ratio: 1;
+        }
+
+        .preview-item img,
+        .preview-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-remove {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .preview-remove:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+
+        /* Metadata */
+        .metadata-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        }
+
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            min-height: 45px;
+            cursor: text;
+            align-items: center;
+        }
+
+        .tag {
+            background: var(--gradient);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .tag-input input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+            padding: 0.3rem;
+        }
+
+        /* Emotions */
+        .emotion-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        .emotion-option {
+            padding: 0.5rem;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .emotion-option:hover {
+            border-color: var(--secondary);
+            transform: scale(1.1);
+        }
+
+        .emotion-option.selected {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+        }
+
+        /* Privacy Settings */
+        .privacy-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .privacy-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .privacy-option:hover {
+            border-color: var(--secondary);
+        }
+
+        .privacy-option.selected {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+        }
+
+        .privacy-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        /* Progress Indicator */
+        .progress-indicator {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+
+        .progress-indicator.active {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .creation-container {
+                grid-template-columns: 1fr;
+            }
+
+            .metadata-section {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .page-title h1 {
+                font-size: 2rem;
+            }
+
+            .memory-types {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .emotion-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <a href="dashboard.html" class="back-button">
+                <span>←</span> Retour au tableau de bord
+            </a>
+            <div class="page-title">
+                <h1>Créer un souvenir</h1>
+                <p>Capturez un moment précieux pour l'éternité</p>
+            </div>
+            <div style="width: 150px;"></div>
+        </div>
+
+        <!-- Memory Type Selection -->
+        <div class="memory-types">
+            <div class="memory-type active" data-type="photo">
+                <div class="memory-type-icon">📸</div>
+                <div class="memory-type-label">Photo</div>
+            </div>
+            <div class="memory-type" data-type="video">
+                <div class="memory-type-icon">🎥</div>
+                <div class="memory-type-label">Vidéo</div>
+            </div>
+            <div class="memory-type" data-type="audio">
+                <div class="memory-type-icon">🎙️</div>
+                <div class="memory-type-label">Audio</div>
+            </div>
+            <div class="memory-type" data-type="text">
+                <div class="memory-type-icon">✍️</div>
+                <div class="memory-type-label">Texte</div>
+            </div>
+            <div class="memory-type" data-type="mixed">
+                <div class="memory-type-icon">🎨</div>
+                <div class="memory-type-label">Mixte</div>
+            </div>
+        </div>
+
+        <!-- Creation Container -->
+        <div class="creation-container">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Upload Area -->
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="fileInput" class="file-input" multiple accept="image/*,video/*,audio/*">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Glissez vos fichiers ici</div>
+                    <div class="upload-subtext">ou cliquez pour parcourir</div>
+                </div>
+
+                <!-- Preview Area -->
+                <div class="preview-area" id="previewArea">
+                    <h3 style="margin-bottom: 1rem;">Aperçu des fichiers</h3>
+                    <div class="preview-grid" id="previewGrid"></div>
+                </div>
+
+                <!-- Audio Recorder -->
+                <div class="audio-recorder" id="audioRecorder" style="display: none;">
+                    <button class="record-button" id="recordButton">🎤</button>
+                    <div class="recording-time" id="recordingTime">00:00</div>
+                    <div class="audio-controls" id="audioControls" style="display: none;">
+                        <button class="btn btn-secondary">▶️ Écouter</button>
+                        <button class="btn btn-secondary">🔄 Recommencer</button>
+                    </div>
+                </div>
+
+                <!-- Text Editor -->
+                <div class="text-editor" id="textEditor">
+                    <div class="editor-toolbar">
+                        <button class="editor-button" data-command="bold">B</button>
+                        <button class="editor-button" data-command="italic">I</button>
+                        <button class="editor-button" data-command="underline">U</button>
+                        <button class="editor-button">📝 Titre</button>
+                        <button class="editor-button">🔗 Lien</button>
+                        <button class="editor-button">😊 Emoji</button>
+                    </div>
+                    <div class="text-area" id="richTextArea" contenteditable="true" style="min-height:120px;outline:none;white-space:pre-wrap;" placeholder="Racontez votre histoire..."></div>
+                </div>
+            </div>
+
+            <!-- Metadata Section -->
+            <div class="metadata-section">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Détails du souvenir</h3>
+
+                <div class="form-group">
+                    <label>Titre du souvenir</label>
+                    <input type="text" placeholder="Un titre mémorable..." id="memoryTitle">
+                </div>
+
+                <div class="form-group">
+                    <label>Date du souvenir</label>
+                    <input type="date" id="memoryDate">
+                </div>
+
+                <div class="form-group">
+                    <label>Lieu</label>
+                    <input type="text" placeholder="Où était-ce ?" id="memoryLocation">
+                </div>
+
+                <div class="form-group">
+                    <label>Personnes présentes</label>
+                    <div class="tag-input" id="peopleTagInput">
+                        <input type="text" placeholder="Ajouter une personne...">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tags</label>
+                    <div class="tag-input" id="tagsInput">
+                        <input type="text" placeholder="Ajouter un tag...">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Émotion associée</label>
+                    <div class="emotion-grid">
+                        <div class="emotion-option" data-emotion="joy">😊</div>
+                        <div class="emotion-option" data-emotion="love">❤️</div>
+                        <div class="emotion-option" data-emotion="pride">🌟</div>
+                        <div class="emotion-option" data-emotion="nostalgia">🥰</div>
+                        <div class="emotion-option" data-emotion="gratitude">🙏</div>
+                        <div class="emotion-option" data-emotion="excitement">🎉</div>
+                        <div class="emotion-option" data-emotion="peace">😌</div>
+                        <div class="emotion-option" data-emotion="hope">🌈</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Confidentialité</label>
+                    <div class="privacy-options">
+                        <div class="privacy-option selected" data-privacy="private">
+                            <span class="privacy-icon">🔒</span>
+                            <div>
+                                <strong>Privé</strong>
+                                <p style="font-size: 0.9rem; color: #666;">Visible uniquement par vous</p>
+                            </div>
+                        </div>
+                        <div class="privacy-option" data-privacy="family">
+                            <span class="privacy-icon">👨‍👩‍👧‍👦</span>
+                            <div>
+                                <strong>Famille</strong>
+                                <p style="font-size: 0.9rem; color: #666;">Partagé avec vos proches</p>
+                            </div>
+                        </div>
+                        <div class="privacy-option" data-privacy="heirs">
+                            <span class="privacy-icon">🕰️</span>
+                            <div>
+                                <strong>Héritage</strong>
+                                <p style="font-size: 0.9rem; color: #666;">Accessible après votre départ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary">Sauvegarder le brouillon</button>
+                    <button class="btn btn-primary" id="publishButton">Publier le souvenir</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="progress-indicator" id="progressIndicator">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="loading-spinner"></div>
+                <div>
+                    <strong>Création en cours...</strong>
+                    <p style="font-size: 0.9rem; color: #666;">Votre souvenir est en train d'être sauvegardé</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/add.js"></script>
+</body>
+</html>

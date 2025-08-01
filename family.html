@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace famille - HéritageAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #4CAF50;
+            --warning: #ff9800;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --family-gradient: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Family Tree Section */
+        .family-tree-section {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .tree-container {
+            margin: 3rem 0;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .generation {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .member-node {
+            position: relative;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .member-node:hover {
+            transform: scale(1.05);
+        }
+
+        .member-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--family-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            margin: 0 auto 0.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .member-avatar.owner {
+            width: 120px;
+            height: 120px;
+            border: 4px solid gold;
+        }
+
+        .member-status {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--success);
+            border: 3px solid white;
+        }
+
+        .member-status.pending {
+            background: var(--warning);
+        }
+
+        .member-status.offline {
+            background: #999;
+        }
+
+        .member-name {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .member-role {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .connection-line {
+            position: absolute;
+            width: 2px;
+            background: #e0e0e0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .connection-line.vertical {
+            height: 40px;
+            top: -40px;
+        }
+
+        .connection-line.horizontal {
+            width: 100%;
+            height: 2px;
+            top: -40px;
+            left: 0;
+            transform: none;
+        }
+
+        /* Members Grid */
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .member-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .member-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--family-gradient);
+        }
+
+        .member-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .member-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .member-avatar-small {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--family-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Permissions Table */
+        .permissions-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .permissions-table {
+            width: 100%;
+            margin-top: 1.5rem;
+            border-collapse: collapse;
+        }
+
+        .permissions-table th,
+        .permissions-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .permissions-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .permission-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--success);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2.5px;
+            left: 2.5px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(25px);
+        }
+
+        /* Activity Feed */
+        .activity-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: start;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: #f8f9fa;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* Invite Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        }
+
+        .invite-link-box {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .invite-link {
+            flex: 1;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--secondary);
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            padding: 0.5rem 1rem;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--secondary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .members-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .permissions-table {
+                font-size: 0.9rem;
+            }
+
+            .permissions-table th,
+            .permissions-table td {
+                padding: 0.5rem;
+            }
+
+            .generation {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .member-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2.5rem;
+            }
+
+            .member-avatar.owner {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1 class="page-title">Espace famille</h1>
+            <div class="header-actions">
+                <button class="btn btn-secondary">
+                    <span>📊</span> Rapport d'activité
+                </button>
+                <button class="btn btn-primary" onclick="openInviteModal()">
+                    <span>➕</span> Inviter un proche
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Family Tree Section -->
+        <div class="family-tree-section">
+            <h2 style="margin-bottom: 1rem;">Arbre familial numérique</h2>
+            <p style="color: #666; margin-bottom: 2rem;">Visualisez et gérez les connexions de votre famille</p>
+            
+            <div class="tree-container">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <!-- You (Owner) -->
+                    <div class="generation">
+                        <div class="member-node">
+                            <div class="member-avatar owner">
+                                👤
+                                <span class="member-status"></span>
+                            </div>
+                            <div class="member-name">Vous</div>
+                            <div class="member-role">Créateur</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Connection Lines -->
+                    <div class="connection-line vertical" style="height: 40px;"></div>
+                    
+                    <!-- Children Generation -->
+                    <div class="generation">
+                        <div class="member-node">
+                            <div class="member-avatar">
+                                👧
+                                <span class="member-status"></span>
+                            </div>
+                            <div class="member-name">Sophie</div>
+                            <div class="member-role">Fille</div>
+                        </div>
+                        <div class="member-node">
+                            <div class="member-avatar">
+                                👦
+                                <span class="member-status"></span>
+                            </div>
+                            <div class="member-name">Thomas</div>
+                            <div class="member-role">Fils</div>
+                        </div>
+                        <div class="member-node">
+                            <div class="member-avatar">
+                                👶
+                                <span class="member-status pending"></span>
+                            </div>
+                            <div class="member-name">Emma</div>
+                            <div class="member-role">Fille • En attente</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('members')">Membres</button>
+            <button class="tab" onclick="switchTab('permissions')">Permissions</button>
+            <button class="tab" onclick="switchTab('activity')">Activité récente</button>
+        </div>
+
+        <!-- Members Tab -->
+        <div id="membersTab" class="tab-content">
+            <div class="members-grid">
+                <div class="member-card">
+                    <div class="member-header">
+                        <div class="member-avatar-small">👩</div>
+                        <div class="member-info">
+                            <h3>Marie Dubois</h3>
+                            <p style="color: #666;">Épouse • Accès complet</p>
+                        </div>
+                    </div>
+                    <div class="member-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">152</div>
+                            <div class="stat-label">Souvenirs vus</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">23</div>
+                            <div class="stat-label">Contributions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">45</div>
+                            <div class="stat-label">Interactions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <div class="member-header">
+                        <div class="member-avatar-small">👧</div>
+                        <div class="member-info">
+                            <h3>Sophie Dubois</h3>
+                            <p style="color: #666;">Fille • Accès partiel</p>
+                        </div>
+                    </div>
+                    <div class="member-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">89</div>
+                            <div class="stat-label">Souvenirs vus</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Contributions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">67</div>
+                            <div class="stat-label">Interactions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <div class="member-header">
+                        <div class="member-avatar-small">👦</div>
+                        <div class="member-info">
+                            <h3>Thomas Dubois</h3>
+                            <p style="color: #666;">Fils • Accès partiel</p>
+                        </div>
+                    </div>
+                    <div class="member-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">76</div>
+                            <div class="stat-label">Souvenirs vus</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">Contributions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">34</div>
+                            <div class="stat-label">Interactions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="member-card" style="border: 2px dashed #e0e0e0; background: #f8f9fa;">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">➕</div>
+                        <h3>Inviter un proche</h3>
+                        <p>Ajoutez des membres de votre famille</p>
+                        <button class="btn btn-primary" style="margin-top: 1rem;" onclick="openInviteModal()">
+                            Inviter maintenant
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permissions Tab -->
+        <div id="permissionsTab" class="tab-content" style="display: none;">
+            <div class="permissions-section">
+                <h3 style="margin-bottom: 1rem;">Gestion des permissions</h3>
+                <p style="color: #666; margin-bottom: 2rem;">Contrôlez l'accès aux souvenirs et fonctionnalités</p>
+
+                <table class="permissions-table">
+                    <thead>
+                        <tr>
+                            <th>Membre</th>
+                            <th>Voir souvenirs</th>
+                            <th>Ajouter souvenirs</th>
+                            <th>Modifier souvenirs</th>
+                            <th>Accès IA</th>
+                            <th>Gérer famille</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 1.5rem;">👩</span>
+                                    Marie Dubois
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch active">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch active">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch active">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch active">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 1.5rem;">👧</span>
+                                    Sophie Dubois
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch active">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch active">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch active">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 1.5rem;">👦</span>
+                                    Thomas Dubois
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch active">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch active">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="permission-toggle">
+                                    <div class="toggle-switch">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Activity Tab -->
+        <div id="activityTab" class="tab-content" style="display: none;">
+            <div class="activity-section">
+                <h3 style="margin-bottom: 1.5rem;">Activité familiale récente</h3>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #e3f2fd;">📸</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Sophie a ajouté 5 photos</div>
+                        <div class="activity-description">Album "Vacances d'été 2023"</div>
+                        <div class="activity-time">Il y a 2 heures</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #f3e5f5;">💬</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Marie a eu une conversation avec l'IA</div>
+                        <div class="activity-description">Sujet : "Recettes de grand-mère"</div>
+                        <div class="activity-time">Il y a 5 heures</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #e8f5e9;">✏️</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Thomas a modifié un souvenir</div>
+                        <div class="activity-description">"Notre premier voyage en famille"</div>
+                        <div class="activity-time">Hier à 18h30</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #fff3e0;">⏰</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Nouvelle capsule temporelle créée</div>
+                        <div class="activity-description">Pour Sophie - Date : 15 mars 2025</div>
+                        <div class="activity-time">Il y a 2 jours</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #fce4ec;">❤️</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Marie a aimé un souvenir</div>
+                        <div class="activity-description">"Notre mariage - 1995"</div>
+                        <div class="activity-time">Il y a 3 jours</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invite Modal -->
+    <div class="modal" id="inviteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Inviter un proche</h2>
+                <button class="modal-close" onclick="closeInviteModal()">×</button>
+            </div>
+
+            <form id="inviteForm">
+                <div class="form-group">
+                    <label>Nom complet</label>
+                    <input type="text" placeholder="Ex: Pierre Dubois" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="email@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Relation</label>
+                    <select required>
+                        <option value="">Sélectionnez une relation</option>
+                        <option>Conjoint(e)</option>
+                        <option>Enfant</option>
+                        <option>Parent</option>
+                        <option>Frère/Sœur</option>
+                        <option>Grand-parent</option>
+                        <option>Petit-enfant</option>
+                        <option>Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Niveau d'accès</label>
+                    <select required>
+                        <option>Accès complet</option>
+                        <option>Accès partiel</option>
+                        <option>Lecture seule</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Message personnel (optionnel)</label>
+                    <textarea rows="3" placeholder="Ajoutez un message pour accompagner l'invitation..."></textarea>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                    <p style="font-weight: bold; margin-bottom: 0.5rem;">Lien d'invitation</p>
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">Partagez ce lien sécurisé avec votre proche</p>
+                    <div class="invite-link-box">
+                        <span class="invite-link">https://heritage-ai.com/invite/xK9mP2qR8v</span>
+                        <button type="button" class="copy-btn" onclick="copyLink()">Copier</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeInviteModal()">Annuler</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Envoyer l'invitation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+        }
+
+        // Toggle switches
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                
+                // Save permission change
+                const memberName = this.closest('tr').querySelector('td:first-child').textContent.trim();
+                const permission = this.closest('td').previousElementSibling?.textContent || 'Unknown';
+                const isActive = this.classList.contains('active');
+                
+                console.log(`Permission changed: ${memberName} - ${permission} - ${isActive ? 'Enabled' : 'Disabled'}`);
+            });
+        });
+
+        // Modal functions
+        function openInviteModal() {
+            document.getElementById('inviteModal').classList.add('active');
+        }
+
+        function closeInviteModal() {
+            document.getElementById('inviteModal').classList.remove('active');
+        }
+
+        // Copy invite link
+        function copyLink() {
+            const link = document.querySelector('.invite-link').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✓ Copié !';
+                copyBtn.style.background = 'var(--success)';
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = 'var(--secondary)';
+                }, 2000);
+            });
+        }
+
+        // Form submission
+        document.getElementById('inviteForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Simulate sending invitation
+            alert('Invitation envoyée avec succès !');
+            closeInviteModal();
+            
+            // Reset form
+            e.target.reset();
+        });
+
+        // Member card interactions
+        document.querySelectorAll('.member-card').forEach(card => {
+            if (!card.querySelector('.empty-state')) {
+                card.addEventListener('click', function() {
+                    // Open member details
+                    console.log('Opening member details...');
+                });
+            }
+        });
+
+        // Family tree node interactions
+        document.querySelectorAll('.member-node').forEach(node => {
+            node.addEventListener('click', function() {
+                // Highlight selected member
+                document.querySelectorAll('.member-node').forEach(n => n.style.opacity = '0.5');
+                this.style.opacity = '1';
+                
+                // Show member details
+                const memberName = this.querySelector('.member-name').textContent;
+                console.log('Selected member:', memberName);
+            });
+        });
+
+        // Activity auto-refresh simulation
+        setInterval(() => {
+            // In a real app, this would fetch new activities
+            console.log('Checking for new family activities...');
+        }, 30000); // Every 30 seconds
+
+        // Initialize tooltips
+        document.querySelectorAll('.member-status').forEach(status => {
+            if (status.classList.contains('pending')) {
+                status.title = 'Invitation en attente';
+            } else if (status.classList.contains('offline')) {
+                status.title = 'Hors ligne';
+            } else {
+                status.title = 'En ligne';
+            }
+        });
+
+        // Generate activity notifications
+        function showNotification(message) {
+            console.log('New notification:', message);
+            // In a real app, this would show a toast notification
+        }
+
+        // Simulate real-time updates
+        setTimeout(() => {
+            showNotification('Sophie vient de se connecter');
+        }, 5000);
+    </script>
+</body>
+</html>

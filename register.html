@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer mon héritage - HéritageAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #4CAF50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Registration container */
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: -1;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.5s ease;
+            z-index: -1;
+        }
+
+        .step {
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #999;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .step.active {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+            transform: scale(1.1);
+        }
+
+        .step.completed {
+            background: var(--success);
+            color: white;
+            border-color: transparent;
+        }
+
+        .step.completed::after {
+            content: '✓';
+            position: absolute;
+            font-size: 1.2rem;
+        }
+
+        .step-label {
+            position: absolute;
+            top: 50px;
+            font-size: 0.8rem;
+            color: #666;
+            white-space: nowrap;
+            transform: translateX(-50%);
+            left: 50%;
+        }
+
+        /* Form sections */
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Password strength */
+        .password-strength {
+            margin-top: 0.5rem;
+        }
+
+        .strength-meter {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s ease;
+        }
+
+        .strength-weak { background: var(--accent); width: 33%; }
+        .strength-medium { background: orange; width: 66%; }
+        .strength-strong { background: var(--success); width: 100%; }
+
+        .strength-text {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 0.2rem;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            flex: 1;
+            cursor: pointer;
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Plan selection */
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .plan-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .plan-card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .plan-card.selected {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .plan-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price small {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .plan-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Success state */
+        .success-message {
+            text-align: center;
+            padding: 3rem;
+            display: none;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: bounceIn 0.6s ease;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Loading */
+        .loading-spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .register-container {
+                padding: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .step-label {
+                display: none;
+            }
+
+            .plan-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <!-- Progress bar -->
+        <div class="progress-bar">
+            <div class="progress-line" id="progressLine"></div>
+            <div class="step active" data-step="1">
+                1
+                <span class="step-label">Informations</span>
+            </div>
+            <div class="step" data-step="2">
+                2
+                <span class="step-label">Personnalisation</span>
+            </div>
+            <div class="step" data-step="3">
+                3
+                <span class="step-label">Plan</span>
+            </div>
+            <div class="step" data-step="4">
+                4
+                <span class="step-label">Confirmation</span>
+            </div>
+        </div>
+
+        <!-- Form sections -->
+        <form id="registerForm" novalidate>
+            <!-- Step 1: Basic Information -->
+            <div class="form-section active" data-section="1">
+                <h2 class="section-title">Créez votre compte</h2>
+                <p class="section-subtitle">Commençons par les informations de base</p>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">Prénom</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Nom</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="password-strength">
+                        <div class="strength-meter">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                        <p class="strength-text" id="strengthText"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmer le mot de passe</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+
+                <div class="button-group">
+                    <a href="login.html" class="btn btn-secondary">Déjà un compte ?</a>
+                    <button type="button" class="btn btn-primary" id="nextStepBtn1">
+                        Continuer <span>→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Personalization -->
+            <div class="form-section" data-section="2">
+                <h2 class="section-title">Personnalisez votre expérience</h2>
+                <p class="section-subtitle">Aidez-nous à mieux vous connaître</p>
+
+                <div class="form-group">
+                    <label for="birthDate">Date de naissance</label>
+                    <input type="date" id="birthDate" name="birthDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">Parlez-nous un peu de vous</label>
+                    <textarea id="bio" name="bio" placeholder="Quelques mots sur vous, vos passions, ce que vous aimeriez transmettre..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="purpose">Qu'est-ce qui vous amène sur HéritageAI ?</label>
+                    <select id="purpose" name="purpose">
+                        <option value="">Sélectionnez une option</option>
+                        <option value="family">Préserver mes souvenirs pour ma famille</option>
+                        <option value="legacy">Créer un héritage numérique</option>
+                        <option value="stories">Partager mes histoires</option>
+                        <option value="connection">Maintenir le lien avec mes proches</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="newsletter" name="newsletter">
+                    <label for="newsletter">
+                        J'aimerais recevoir des conseils pour enrichir mon héritage numérique (1 email/mois maximum)
+                    </label>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" id="prevStepBtn2">
+                        <span>←</span> Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" id="nextStepBtn2">
+                        Continuer <span>→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Plan Selection -->
+            <div class="form-section" data-section="3">
+                <h2 class="section-title">Choisissez votre plan</h2>
+                <p class="section-subtitle">Commencez gratuitement, évoluez selon vos besoins</p>
+
+                <div class="plan-grid">
+                    <div class="plan-card" data-plan-id="free">
+                        <div class="plan-icon">🌱</div>
+                        <div class="plan-name">Découverte</div>
+                        <div class="plan-price">Gratuit</div>
+                        <ul class="plan-features">
+                            <li>5 souvenirs</li>
+                            <li>1 capsule temporelle</li>
+                            <li>IA conversationnelle basique</li>
+                            <li>Partage avec 3 proches</li>
+                        </ul>
+                    </div>
+
+                    <div class="plan-card" data-plan-id="premium">
+                        <div class="plan-badge">Populaire</div>
+                        <div class="plan-icon">⭐</div>
+                        <div class="plan-name">Premium</div>
+                        <div class="plan-price">9,99€<small>/mois</small></div>
+                        <ul class="plan-features">
+                            <li>Souvenirs illimités</li>
+                            <li>10 capsules temporelles</li>
+                            <li>IA avancée + clonage vocal</li>
+                            <li>Partage illimité</li>
+                            <li>Mémoire collaborative</li>
+                        </ul>
+                    </div>
+
+                    <div class="plan-card" data-plan-id="family">
+                        <div class="plan-icon">👨‍👩‍👧‍👦</div>
+                        <div class="plan-name">Famille</div>
+                        <div class="plan-price">19,99€<small>/mois</small></div>
+                        <ul class="plan-features">
+                            <li>Tout Premium inclus</li>
+                            <li>5 comptes famille</li>
+                            <li>Arbre généalogique vivant</li>
+                            <li>Avatar 3D personnalisé</li>
+                            <li>Support prioritaire</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <input type="hidden" id="selectedPlan" name="plan" value="">
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" id="prevStepBtn3">
+                        <span>←</span> Retour
+                    </button>
+                    <button type="button" class="btn btn-primary" disabled id="planNextBtn">
+                        Continuer <span>→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Confirmation -->
+            <div class="form-section" data-section="4">
+                <h2 class="section-title">Dernière étape !</h2>
+                <p class="section-subtitle">Vérifiez vos informations et acceptez nos conditions</p>
+
+                <div class="summary-box" style="background: #f8f9fa; padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);">Récapitulatif</h3>
+                    <div id="summaryContent"></div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">
+                        J'accepte les <a href="#" style="color: var(--secondary);">conditions d'utilisation</a> 
+                        et la <a href="#" style="color: var(--secondary);">politique de confidentialité</a>
+                    </label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="dataConsent" name="dataConsent" required>
+                    <label for="dataConsent">
+                        Je comprends que mes données seront chiffrées et stockées de manière sécurisée, 
+                        et que je garde le contrôle total sur leur accès et leur utilisation
+                    </label>
+                </div>
+
+                <div class="loading-spinner" id="loadingSpinner"></div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" id="prevStepBtn4">
+                        <span>←</span> Retour
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        Créer mon héritage <span>🚀</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Success message -->
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">🎉</div>
+            <h2 class="section-title">Bienvenue dans HéritageAI !</h2>
+            <p class="section-subtitle">Votre compte a été créé avec succès</p>
+            <p style="margin: 2rem 0;">Vous allez être redirigé vers la page de connexion dans quelques secondes...</p>
+            <a href="login.html" class="btn btn-primary">Accéder à la connexion</a>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/register.js"></script>
+</body>
+</html>

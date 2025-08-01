@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coucher de soleil à Santorin - HéritageAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #4CAF50;
+            --warning: #ff9800;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --memory-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+        }
+
+        .back-button:hover {
+            background: #f0f8ff;
+            transform: translateX(-5px);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-button {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .action-button:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .action-button.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Main Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        /* Media Section */
+        .media-section {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .media-viewer {
+            position: relative;
+            background: #000;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .media-viewer img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .media-viewer video {
+            width: 100%;
+            height: 100%;
+        }
+
+        .audio-player {
+            background: var(--gradient);
+            color: white;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .audio-icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+        }
+
+        .audio-waveform {
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            gap: 3px;
+        }
+
+        .wave-bar {
+            flex: 1;
+            height: 40%;
+            background: white;
+            border-radius: 2px;
+            transition: height 0.3s ease;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .play-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            color: var(--primary);
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .time-display {
+            font-size: 1.1rem;
+        }
+
+        /* Media Thumbnails */
+        .media-thumbnails {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            background: #f8f9fa;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            flex-shrink: 0;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.1);
+        }
+
+        .thumbnail.active {
+            border-color: var(--secondary);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Content Section */
+        .content-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .memory-header {
+            margin-bottom: 2rem;
+        }
+
+        .memory-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .memory-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .memory-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #444;
+            margin: 2rem 0;
+        }
+
+        /* Interaction Bar */
+        .interaction-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-top: 2px solid #f0f0f0;
+            border-bottom: 2px solid #f0f0f0;
+            margin: 2rem 0;
+        }
+
+        .interaction-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .interaction-btn {
+            padding: 0.8rem 1.5rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .interaction-btn:hover {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+            transform: translateY(-2px);
+        }
+
+        .interaction-btn.liked {
+            background: #fee;
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .interaction-count {
+            font-weight: bold;
+        }
+
+        .share-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            display: none;
+            z-index: 10;
+        }
+
+        .share-menu.active {
+            display: block;
+        }
+
+        .share-option {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .share-option:hover {
+            background: #f0f0f0;
+        }
+
+        /* Tags and People */
+        .info-section {
+            margin: 2rem 0;
+        }
+
+        .info-section h3 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .person-card {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .person-card:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .person-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin-top: 3rem;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: none;
+            min-height: 60px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        }
+
+        .btn-primary {
+            padding: 1rem 2rem;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .comment {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .comment-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .comment-content {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 15px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .comment-time {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .comment-text {
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .comment-action {
+            font-size: 0.85rem;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .comment-action:hover {
+            color: var(--secondary);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Family Contributions */
+        .contribution-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .contribution-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .contribution-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .contribution-details {
+            flex: 1;
+        }
+
+        .contribution-type {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .contribution-author {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Related Memories */
+        .related-memory {
+            display: flex;
+            gap: 1rem;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .related-memory:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .related-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .related-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .related-info {
+            flex: 1;
+        }
+
+        .related-title {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .related-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Memory Info */
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: var(--primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Add Contribution Button */
+        .add-contribution-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .add-contribution-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .memory-title {
+                font-size: 1.5rem;
+            }
+
+            .interaction-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .comment-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <a href="souvenirClient.html" class="back-button">
+                <span>←</span> Retour aux souvenirs
+            </a>
+            <div class="header-actions">
+                <button class="action-button" onclick="editMemory()">
+                    <span>✏️</span> Modifier
+                </button>
+                <button class="action-button" onclick="downloadMemory()">
+                    <span>💾</span> Télécharger
+                </button>
+                <button class="action-button" id="favoriteBtn" onclick="toggleFavorite()">
+                    <span>⭐</span> Favori
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Left Column - Media and Content -->
+        <div class="main-content">
+            <!-- Media Section -->
+            <div class="media-section">
+                <div class="media-viewer" id="mediaViewer">
+                    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'><defs><linearGradient id='sky' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' style='stop-color:%23FF6B6B'/><stop offset='100%' style='stop-color:%23FFE66D'/></linearGradient></defs><rect fill='url(%23sky)' width='1200' height='800'/><circle cx='900' cy='200' r='80' fill='%23FFE66D'/><rect x='0' y='500' width='1200' height='300' fill='%233498db' opacity='0.6'/><path d='M0,400 Q300,350 600,400 T1200,400' fill='white'/><path d='M100,450 L150,350 L200,450 Z' fill='white'/><path d='M300,470 L350,370 L400,470 Z' fill='white'/><text x='600' y='700' text-anchor='middle' fill='white' font-family='Arial' font-size='30' opacity='0.8'>Santorin 2019</text></svg>" alt="Coucher de soleil à Santorin">
+                </div>
+                <div class="media-thumbnails">
+                    <div class="thumbnail active">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23FF6B6B' width='100' height='100'/></svg>" alt="Photo 1">
+                    </div>
+                    <div class="thumbnail">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23FFE66D' width='100' height='100'/></svg>" alt="Photo 2">
+                    </div>
+                    <div class="thumbnail">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%234ECDC4' width='100' height='100'/></svg>" alt="Photo 3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Section -->
+            <div class="content-section">
+                <div class="memory-header">
+                    <h1 class="memory-title">Coucher de soleil à Santorin</h1>
+                    <div class="memory-meta">
+                        <span class="meta-item">
+                            <span>📅</span> 15 juillet 2019
+                        </span>
+                        <span class="meta-item">
+                            <span>📍</span> Oia, Santorin, Grèce
+                        </span>
+                        <span class="meta-item">
+                            <span>👤</span> Créé par Marie
+                        </span>
+                        <span class="meta-item">
+                            <span>👁️</span> 247 vues
+                        </span>
+                    </div>
+                </div>
+
+                <div class="memory-description">
+                    <p>Un moment magique partagé en famille devant le plus beau coucher de soleil de notre vie. Les enfants étaient émerveillés par les couleurs orangées qui se reflétaient sur les maisons blanches d'Oia. Ce voyage en Grèce restera gravé dans nos mémoires comme l'un des plus beaux moments passés ensemble.</p>
+                    
+                    <p>Nous avions trouvé le spot parfait après avoir marché dans les ruelles étroites. Sophie a pris des dizaines de photos, Thomas filmait tout, et nous, on savourait simplement l'instant présent. Le temps semblait s'être arrêté pendant ces quelques minutes où le soleil disparaissait lentement à l'horizon.</p>
+                    
+                    <p>Ce qui rendait ce moment encore plus spécial, c'était d'être tous réunis après une année difficile. Cette escapade en Grèce était notre façon de célébrer le fait d'être ensemble, en bonne santé, et de pouvoir partager ces instants précieux.</p>
+                </div>
+
+                <!-- Interaction Bar -->
+                <div class="interaction-bar">
+                    <div class="interaction-buttons">
+                        <button class="interaction-btn liked" onclick="toggleLike(this)">
+                            <span>❤️</span>
+                            <span class="interaction-count">32</span>
+                        </button>
+                        <button class="interaction-btn">
+                            <span>💬</span>
+                            <span class="interaction-count">15</span>
+                        </button>
+                        <div style="position: relative;">
+                            <button class="interaction-btn" onclick="toggleShareMenu()">
+                                <span>↗️</span>
+                                Partager
+                            </button>
+                            <div class="share-menu" id="shareMenu">
+                                <div class="share-option">
+                                    <span>📧</span> Email
+                                </div>
+                                <div class="share-option">
+                                    <span>🔗</span> Copier le lien
+                                </div>
+                                <div class="share-option">
+                                    <span>💬</span> WhatsApp
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="memory-stats">
+                        <span style="color: #666; font-size: 0.9rem;">Partagé avec 15 membres de la famille</span>
+                    </div>
+                </div>
+
+                <!-- Tags Section -->
+                <div class="info-section">
+                    <h3>Tags</h3>
+                    <div class="tags-list">
+                        <span class="tag">Vacances</span>
+                        <span class="tag">Famille</span>
+                        <span class="tag">Grèce</span>
+                        <span class="tag">Coucher de soleil</span>
+                        <span class="tag">Été 2019</span>
+                        <span class="tag">Voyage</span>
+                        <span class="tag">Moments précieux</span>
+                    </div>
+                </div>
+
+                <!-- People Section -->
+                <div class="info-section">
+                    <h3>Personnes présentes</h3>
+                    <div class="people-grid">
+                        <div class="person-card">
+                            <div class="person-avatar">M</div>
+                            <div>
+                                <div style="font-weight: 600;">Marie</div>
+                                <div style="font-size: 0.85rem; color: #666;">Maman</div>
+                            </div>
+                        </div>
+                        <div class="person-card">
+                            <div class="person-avatar">P</div>
+                            <div>
+                                <div style="font-weight: 600;">Pierre</div>
+                                <div style="font-size: 0.85rem; color: #666;">Papa</div>
+                            </div>
+                        </div>
+                        <div class="person-card">
+                            <div class="person-avatar">S</div>
+                            <div>
+                                <div style="font-weight: 600;">Sophie</div>
+                                <div style="font-size: 0.85rem; color: #666;">Fille</div>
+                            </div>
+                        </div>
+                        <div class="person-card">
+                            <div class="person-avatar">T</div>
+                            <div>
+                                <div style="font-weight: 600;">Thomas</div>
+                                <div style="font-size: 0.85rem; color: #666;">Fils</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="comments-section">
+                    <h3 style="font-size: 1.2rem; color: var(--primary); margin-bottom: 1.5rem;">
+                        Commentaires et souvenirs partagés
+                    </h3>
+
+                    <div class="comment-form">
+                        <textarea class="comment-input" placeholder="Partagez vos souvenirs de ce moment..." id="commentInput"></textarea>
+                        <button class="btn-primary" onclick="postComment()">Publier</button>
+                    </div>
+
+                    <div class="comments-list" id="commentsList">
+                        <div class="comment">
+                            <div class="comment-avatar">S</div>
+                            <div class="comment-content">
+                                <div class="comment-header">
+                                    <span class="comment-author">Sophie</span>
+                                    <span class="comment-time">Il y a 2 jours</span>
+                                </div>
+                                <div class="comment-text">
+                                    C'était vraiment le plus beau coucher de soleil que j'ai jamais vu ! Je me souviens encore de l'odeur de la mer et du vent dans mes cheveux. ❤️
+                                </div>
+                                <div class="comment-actions">
+                                    <span class="comment-action">J'aime</span>
+                                    <span class="comment-action">Répondre</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comment">
+                            <div class="comment-avatar">T</div>
+                            <div class="comment-content">
+                                <div class="comment-header">
+                                    <span class="comment-author">Thomas</span>
+                                    <span class="comment-time">Il y a 5 jours</span>
+                                </div>
+                                <div class="comment-text">
+                                    J'ai encore la vidéo sur mon téléphone ! On devrait la regarder tous ensemble à Noël. Ce voyage était vraiment exceptionnel, merci papa et maman de nous avoir offert ces moments.
+                                </div>
+                                <div class="comment-actions">
+                                    <span class="comment-action">J'aime (2)</span>
+                                    <span class="comment-action">Répondre</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comment">
+                            <div class="comment-avatar">P</div>
+                            <div class="comment-content">
+                                <div class="comment-header">
+                                    <span class="comment-author">Pierre</span>
+                                    <span class="comment-time">Il y a 1 semaine</span>
+                                </div>
+                                <div class="comment-text">
+                                    Je me souviens du restaurant où on a dîné juste après. Le propriétaire nous avait offert le dessert quand il a su que c'était notre première fois à Santorin. Les gens étaient si accueillants !
+                                </div>
+                                <div class="comment-actions">
+                                    <span class="comment-action">J'aime (3)</span>
+                                    <span class="comment-action">Répondre</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Sidebar -->
+        <div class="sidebar">
+            <!-- Family Contributions -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Contributions familiales</h3>
+                <button class="add-contribution-btn" onclick="openContributionModal()">
+                    <span>➕</span> Ajouter à ce souvenir
+                </button>
+                
+                <div class="contribution-item">
+                    <div class="contribution-icon">📸</div>
+                    <div class="contribution-details">
+                        <div class="contribution-type">3 photos ajoutées</div>
+                        <div class="contribution-author">Par Sophie • Il y a 3 jours</div>
+                    </div>
+                </div>
+
+                <div class="contribution-item">
+                    <div class="contribution-icon">🎥</div>
+                    <div class="contribution-details">
+                        <div class="contribution-type">Vidéo du coucher de soleil</div>
+                        <div class="contribution-author">Par Thomas • Il y a 1 semaine</div>
+                    </div>
+                </div>
+
+                <div class="contribution-item">
+                    <div class="contribution-icon">📝</div>
+                    <div class="contribution-details">
+                        <div class="contribution-type">Note ajoutée</div>
+                        <div class="contribution-author">Par Pierre • Il y a 2 semaines</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Memory Info -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Informations</h3>
+                <div class="info-item">
+                    <span class="info-label">Type</span>
+                    <span class="info-value">📸 Photos</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Créé le</span>
+                    <span class="info-value">20 juillet 2019</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Modifié le</span>
+                    <span class="info-value">15 janvier 2024</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Confidentialité</span>
+                    <span class="info-value">👨‍👩‍👧‍👦 Famille</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Taille</span>
+                    <span class="info-value">12.5 MB</span>
+                </div>
+            </div>
+
+            <!-- Related Memories -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Souvenirs similaires</h3>
+                
+                <div class="related-memory" onclick="window.location.href='#'">
+                    <div class="related-thumbnail">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%234ECDC4' width='100' height='100'/></svg>" alt="Athènes">
+                    </div>
+                    <div class="related-info">
+                        <div class="related-title">Visite de l'Acropole</div>
+                        <div class="related-date">13 juillet 2019</div>
+                    </div>
+                </div>
+
+                <div class="related-memory" onclick="window.location.href='#'">
+                    <div class="related-thumbnail">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23FFE66D' width='100' height='100'/></svg>" alt="Plage">
+                    </div>
+                    <div class="related-info">
+                        <div class="related-title">Plage de Perissa</div>
+                        <div class="related-date">16 juillet 2019</div>
+                    </div>
+                </div>
+
+                <div class="related-memory" onclick="window.location.href='#'">
+                    <div class="related-thumbnail">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23FF6B6B' width='100' height='100'/></svg>" alt="Mykonos">
+                    </div>
+                    <div class="related-info">
+                        <div class="related-title">Excursion à Mykonos</div>
+                        <div class="related-date">18 juillet 2019</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contribution Modal -->
+    <div class="modal" id="contributionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter à ce souvenir</h2>
+                <button class="modal-close" onclick="closeContributionModal()">×</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                <button class="contribution-option" onclick="selectContributionType('photo')">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">📸</div>
+                    <div style="font-weight: bold;">Photos</div>
+                    <div style="font-size: 0.9rem; color: #666;">Ajoutez vos photos</div>
+                </button>
+                <button class="contribution-option" onclick="selectContributionType('video')">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎥</div>
+                    <div style="font-weight: bold;">Vidéo</div>
+                    <div style="font-size: 0.9rem; color: #666;">Partagez une vidéo</div>
+                </button>
+                <button class="contribution-option" onclick="selectContributionType('audio')">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎙️</div>
+                    <div style="font-weight: bold;">Audio</div>
+                    <div style="font-size: 0.9rem; color: #666;">Enregistrez un message</div>
+                </button>
+                <button class="contribution-option" onclick="selectContributionType('note')">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">📝</div>
+                    <div style="font-weight: bold;">Note</div>
+                    <div style="font-size: 0.9rem; color: #666;">Écrivez un texte</div>
+                </button>
+            </div>
+
+            <div id="contributionForm" style="display: none;">
+                <!-- Form content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .contribution-option {
+            padding: 2rem;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .contribution-option:hover {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-area {
+            border: 3px dashed #e0e0e0;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            margin: 2rem 0;
+        }
+
+        .upload-area:hover {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        }
+    </style>
+
+    <script>
+        // Toggle Like
+        function toggleLike(button) {
+            button.classList.toggle('liked');
+            const count = button.querySelector('.interaction-count');
+            const currentCount = parseInt(count.textContent);
+            
+            if (button.classList.contains('liked')) {
+                count.textContent = currentCount + 1;
+            } else {
+                count.textContent = currentCount - 1;
+            }
+        }
+
+        // Toggle Share Menu
+        function toggleShareMenu() {
+            const shareMenu = document.getElementById('shareMenu');
+            shareMenu.classList.toggle('active');
+        }
+
+        // Close share menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const shareMenu = document.getElementById('shareMenu');
+            if (!e.target.closest('.interaction-btn') && !e.target.closest('.share-menu')) {
+                shareMenu.classList.remove('active');
+            }
+        });
+
+        // Toggle Favorite
+        function toggleFavorite() {
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            favoriteBtn.classList.toggle('active');
+        }
+
+        // Post Comment
+        function postComment() {
+            const input = document.getElementById('commentInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+
+            const comment = document.createElement('div');
+            comment.className = 'comment';
+            comment.innerHTML = `
+                <div class="comment-avatar">👤</div>
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-author">Vous</span>
+                        <span class="comment-time">À l'instant</span>
+                    </div>
+                    <div class="comment-text">${text}</div>
+                    <div class="comment-actions">
+                        <span class="comment-action">J'aime</span>
+                        <span class="comment-action">Répondre</span>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('commentsList').insertBefore(comment, document.getElementById('commentsList').firstChild);
+            input.value = '';
+            
+            // Update comment count
+            const commentBtn = document.querySelector('.interaction-btn:nth-child(2) .interaction-count');
+            commentBtn.textContent = parseInt(commentBtn.textContent) + 1;
+        }
+
+        // Thumbnail Gallery
+        document.querySelectorAll('.thumbnail').forEach((thumb, index) => {
+            thumb.addEventListener('click', function() {
+                document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Change main image (in real app, this would load the actual image)
+                const colors = ['%23FF6B6B', '%23FFE66D', '%234ECDC4'];
+                const mediaViewer = document.getElementById('mediaViewer');
+                mediaViewer.innerHTML = `<img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'><rect fill='${colors[index]}' width='1200' height='800'/><text x='600' y='400' text-anchor='middle' fill='white' font-family='Arial' font-size='40'>Photo ${index + 1}</text></svg>" alt="Photo ${index + 1}">`;
+            });
+        });
+
+        // Contribution Modal
+        function openContributionModal() {
+            document.getElementById('contributionModal').classList.add('active');
+        }
+
+        function closeContributionModal() {
+            document.getElementById('contributionModal').classList.remove('active');
+            document.getElementById('contributionForm').style.display = 'none';
+        }
+
+        function selectContributionType(type) {
+            const formDiv = document.getElementById('contributionForm');
+            formDiv.style.display = 'block';
+            
+            let formContent = '';
+            
+            switch(type) {
+                case 'photo':
+                    formContent = `
+                        <h3 style="margin-bottom: 1rem;">Ajouter des photos</h3>
+                        <div class="upload-area">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📸</div>
+                            <p style="font-weight: bold; margin-bottom: 0.5rem;">Glissez vos photos ici</p>
+                            <p style="color: #666;">ou cliquez pour parcourir</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Description (optionnel)</label>
+                            <textarea rows="3" placeholder="Ajoutez une description pour vos photos..."></textarea>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button class="btn-primary" style="flex: 1;">Ajouter les photos</button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'note':
+                    formContent = `
+                        <h3 style="margin-bottom: 1rem;">Ajouter une note</h3>
+                        <div class="form-group">
+                            <label>Votre message</label>
+                            <textarea rows="6" placeholder="Partagez vos souvenirs ou ajoutez des détails à cette histoire..."></textarea>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button class="btn-primary" style="flex: 1;">Ajouter la note</button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'video':
+                    formContent = `
+                        <h3 style="margin-bottom: 1rem;">Ajouter une vidéo</h3>
+                        <div class="upload-area">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🎥</div>
+                            <p style="font-weight: bold; margin-bottom: 0.5rem;">Glissez votre vidéo ici</p>
+                            <p style="color: #666;">ou cliquez pour parcourir</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Titre de la vidéo</label>
+                            <input type="text" placeholder="Ex: Moments drôles du voyage">
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button class="btn-primary" style="flex: 1;">Ajouter la vidéo</button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'audio':
+                    formContent = `
+                        <h3 style="margin-bottom: 1rem;">Enregistrer un message audio</h3>
+                        <div style="text-align: center; padding: 2rem;">
+                            <button style="width: 100px; height: 100px; border-radius: 50%; background: var(--gradient); color: white; border: none; cursor: pointer; font-size: 3rem;">
+                                🎤
+                            </button>
+                            <p style="margin-top: 1rem; color: #666;">Cliquez pour commencer l'enregistrement</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Description (optionnel)</label>
+                            <input type="text" placeholder="Ex: Mon témoignage sur ce voyage">
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button class="btn-primary" style="flex: 1;">Sauvegarder l'audio</button>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            formDiv.innerHTML = formContent;
+        }
+
+        // Edit Memory
+        function editMemory() {
+            alert('Fonction d\'édition - À implémenter');
+        }
+
+        // Download Memory
+        function downloadMemory() {
+            alert('Téléchargement du souvenir - À implémenter');
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeContributionModal();
+            }
+        });
+
+        // Comment actions
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('comment-action')) {
+                if (e.target.textContent.includes('J\'aime')) {
+                    const match = e.target.textContent.match(/\((\d+)\)/);
+                    const currentCount = match ? parseInt(match[1]) : 0;
+                    e.target.textContent = `J'aime (${currentCount + 1})`;
+                } else if (e.target.textContent === 'Répondre') {
+                    // Add reply functionality here
+                    console.log('Reply clicked');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

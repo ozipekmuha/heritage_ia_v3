@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un souvenir – HéritageAI</title>
+</head>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f8f9fa;
+        color: #2c3e50;
+        margin: 0;
+        padding: 0;
+    }
+    .dashboard-topbar {
+        background: #fff;
+        box-shadow: 0 2px 20px rgba(44,62,80,0.08);
+        padding: 1.1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .back-dashboard {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.08rem;
+        transition: color 0.2s;
+    }
+    .back-dashboard:hover {
+        color: #e74c3c;
+    }
+    .dashboard-container {
+        max-width: 500px;
+        margin: 2.5rem auto 0 auto;
+        padding: 0 1.2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .ia-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+        padding: 2.2rem 2rem 2rem 2rem;
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        width: 100%;
+        align-items: stretch;
+    }
+    .dashboard-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.7rem;
+        text-align: center;
+    }
+    .memory-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+    .memory-form textarea {
+        border: 1px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
+        background: #f8f9fa;
+        resize: none;
+        min-height: 90px;
+        transition: border 0.2s;
+    }
+    .memory-form textarea:focus {
+        outline: none;
+        border: 1.5px solid #3498db;
+    }
+    .memory-form input[type="file"] {
+        border: none;
+        background: none;
+        font-size: 1rem;
+        color: #2c3e50;
+    }
+    .ia-action-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        padding: 0.7rem 1.7rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+        box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+        letter-spacing: 0.01em;
+    }
+    .ia-action-btn:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px) scale(1.04);
+        box-shadow: 0 6px 20px rgba(44,62,80,0.13);
+    }
+    #memory-feedback {
+        color: #4CAF50;
+        font-weight: 500;
+        text-align: center;
+        margin-top: 1.2rem;
+    }
+    @media (max-width: 600px) {
+        .dashboard-container { padding: 0 0.2rem; }
+        .ia-card { padding: 1.2rem 0.5rem; }
+        .dashboard-title { font-size: 1.1rem; }
+    }
+</style>
+</head>
+<body>
+    <div class="dashboard-topbar">
+        <a href="dashboard.html" class="back-dashboard">← Retour au tableau de bord</a>
+    </div>
+    <main class="dashboard-container" style="max-width:500px;">
+        <section class="ia-card" style="margin:2.5rem auto;">
+            <h1 class="dashboard-title" style="font-size:1.4rem;margin-bottom:0.7rem;">Ajouter un souvenir familial</h1>
+            <p style="color:#666;margin-bottom:1.5rem;">Partagez un souvenir, une anecdote ou une photo pour enrichir la mémoire familiale. Votre contribution sera validée par le propriétaire du compte.</p>
+            <form id="family-memory-form" class="memory-form" style="gap:1.2rem;">
+                <textarea id="memory-text" placeholder="Racontez un souvenir, une anecdote, une valeur..." maxlength="400" required></textarea>
+                <input type="file" id="memory-media" accept="image/*,video/*">
+                <button type="submit" class="ia-action-btn" style="width:100%;">Envoyer le souvenir</button>
+            </form>
+            <div id="memory-feedback" style="display:none;margin-top:1.2rem;color:var(--success);font-weight:500;"></div>
+        </section>
+    </main>
+    <script>
+    document.getElementById('family-memory-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const feedback = document.getElementById('memory-feedback');
+        feedback.style.display = 'block';
+        feedback.textContent = 'Merci ! Votre souvenir a bien été transmis et sera validé prochainement.';
+        this.reset();
+        setTimeout(() => { feedback.style.display = 'none'; }, 5000);
+    });
+    </script>
+</body>
+</html>

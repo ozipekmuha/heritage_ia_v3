@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HéritageAI - Préservez votre essence pour l'éternité</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: var(--gradient);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: move 20s linear infinite;
+        }
+
+        @keyframes move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            max-width: 800px;
+            padding: 2rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--dark);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .secondary-button {
+            background: white;
+            color: var(--dark);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .secondary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 2rem;
+            background: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .feature-card p {
+            color: var(--dark);
+            opacity: 0.8;
+        }
+
+        /* How it Works */
+        .how-it-works {
+            padding: 5rem 2rem;
+            background: #f8f9fa;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--secondary), transparent);
+            z-index: 0;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 5rem 2rem;
+            background: white;
+        }
+
+        .testimonial-card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .quote-icon {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 3rem;
+            color: var(--secondary);
+            opacity: 0.3;
+        }
+
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+        }
+
+        .testimonial-author {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-section .cta-button {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 3rem 2rem 1rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .step:not(:last-child)::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">HéritageAI</div>
+            <ul class="nav-links">
+                <li><a href="#home">Accueil</a></li>
+                <li><a href="#features">Fonctionnalités</a></li>
+                <li><a href="#how-it-works">Comment ça marche</a></li>
+                <li><a href="#testimonials">Témoignages</a></li>
+                <li><a href="#pricing">Tarifs</a></li>
+            </ul>
+            <a href="login.html" class="cta-button">Commencer</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Votre essence, pour l'éternité</h1>
+            <p>Créez un double numérique qui préserve vos histoires, votre voix et votre personnalité. 
+               Un héritage vivant qui continue d'évoluer avec vos proches.</p>
+            <div class="hero-buttons">
+                <a href="register.html" class="cta-button">Créer mon héritage</a>
+                <a href="#how-it-works" class="secondary-button">Découvrir comment</a>
+            </div>
+        </div>
+    </section>
+
+        
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Un écosystème vivant de souvenirs</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎙️</div>
+                    <h3>Clonage vocal</h3>
+                    <p>Votre voix unique est préservée pour raconter vos histoires avec authenticité et émotion.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>IA conversationnelle</h3>
+                    <p>Un double numérique qui répond avec votre personnalité, vos expressions et vos valeurs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📸</div>
+                    <h3>Souvenirs multimédia</h3>
+                    <p>Photos, vidéos, audios et textes s'entremêlent pour créer une histoire riche et vivante.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⏰</div>
+                    <h3>Capsules temporelles</h3>
+                    <p>Programmez des messages pour les moments importants : anniversaires, mariages, réussites.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍👩‍👧‍👦</div>
+                    <h3>Mémoire collaborative</h3>
+                    <p>Vos proches enrichissent votre histoire en ajoutant leurs propres souvenirs partagés.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Sécurité maximale</h3>
+                    <p>Chiffrement de bout en bout et contrôle total sur qui accède à vos souvenirs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Simple comme un souvenir</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Racontez votre histoire</h3>
+                    <p>Répondez à des questions guidées et partagez vos souvenirs les plus précieux.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Personnalisez votre IA</h3>
+                    <p>Entraînez votre double numérique pour qu'il parle et pense comme vous.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Créez des capsules</h3>
+                    <p>Programmez des messages pour les moments importants de la vie de vos proches.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Partagez l'accès</h3>
+                    <p>Invitez vos proches à interagir avec votre héritage numérique.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2 class="section-title">Des liens qui perdurent</h2>
+            <div class="testimonial-card">
+                <span class="quote-icon">"</span>
+                <p class="testimonial-content">
+                    Pouvoir entendre la voix de mon grand-père me raconter ses aventures de jeunesse, 
+                    c'est comme s'il était encore là. Un cadeau inestimable pour toute la famille.
+                </p>
+                <p class="testimonial-author">- Marie, 34 ans</p>
+            </div>
+            <div class="testimonial-card">
+                <span class="quote-icon">"</span>
+                <p class="testimonial-content">
+                    J'ai créé mon héritage numérique pour mes enfants. Savoir qu'ils pourront toujours 
+                    me poser des questions et entendre mes conseils me rassure profondément.
+                </p>
+                <p class="testimonial-author">- Pierre, 58 ans</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nos engagements -->
+    <section class="commitments-section">
+        <div class="container commitments-container">
+            <div class="commitments-badge">
+                <span class="badge-secure">🔒 100% sécurisé</span>
+                <span class="badge-fr">🇫🇷 Made in France</span>
+            </div>
+            <h2 class="section-title">Nos engagements</h2>
+            <ul class="commitments-list">
+                <li><strong>Éthique&nbsp;:</strong> Respect absolu de votre vie privée, aucun usage commercial de vos données.</li>
+                <li><strong>Sécurité&nbsp;:</strong> Chiffrement de bout en bout, stockage en France, accès strictement contrôlé.</li>
+                <li><strong>RGPD&nbsp;:</strong> Conformité totale, suppression immédiate sur demande, transparence sur l’usage des données.</li>
+                <li><strong>Made in France&nbsp;:</strong> Développement, hébergement et support 100% français.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Comparatif simple -->
+    <section class="compare-section">
+        <div class="container">
+            <h2 class="section-title">Comparatif&nbsp;: HéritageAI vs autres solutions</h2>
+            <div class="compare-table-wrapper">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>HéritageAI</th>
+                            <th>Solutions classiques</th>
+                            <th>Réseaux sociaux</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Propriété des données</td>
+                            <td>Vous</td>
+                            <td>Entreprise</td>
+                            <td>Plateforme</td>
+                        </tr>
+                        <tr>
+                            <td>Suppression à tout moment</td>
+                            <td>Oui, immédiate</td>
+                            <td>Parfois limitée</td>
+                            <td>Non garanti</td>
+                        </tr>
+                        <tr>
+                            <td>Chiffrement</td>
+                            <td>De bout en bout</td>
+                            <td>Basique</td>
+                            <td>Non</td>
+                        </tr>
+                        <tr>
+                            <td>Made in France</td>
+                            <td>🇫🇷 Oui</td>
+                            <td>Non</td>
+                            <td>Non</td>
+                        </tr>
+                        <tr>
+                            <td>Respect RGPD</td>
+                            <td>✔️</td>
+                            <td>Partiel</td>
+                            <td>Non</td>
+                        </tr>
+                        <tr>
+                            <td>Double numérique interactif</td>
+                            <td>Oui</td>
+                            <td>Non</td>
+                            <td>Non</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog / Ressources pédagogiques -->
+    <section class="blog-section" id="blog">
+        <div class="container">
+            <h2 class="section-title">Ressources & Blog</h2>
+            <div class="blog-grid">
+                <a href="#" class="blog-card">
+                    <div class="blog-img" style="background:#e9e9f7 url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80') center/cover;"></div>
+                    <div class="blog-content">
+                        <h3>Comprendre le RGPD et vos droits</h3>
+                        <p>Un guide simple pour protéger votre vie numérique et exercer vos droits en toute confiance.</p>
+                        <span class="blog-link">Lire l’article →</span>
+                    </div>
+                </a>
+                <a href="#" class="blog-card">
+                    <div class="blog-img" style="background:#e9e9f7 url('https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80') center/cover;"></div>
+                    <div class="blog-content">
+                        <h3>Éthique & IA&nbsp;: nos engagements</h3>
+                        <p>Découvrez comment HéritageAI place l’éthique et la transparence au cœur de sa technologie.</p>
+                        <span class="blog-link">Lire l’article →</span>
+                    </div>
+                </a>
+                <a href="#" class="blog-card">
+                    <div class="blog-img" style="background:#e9e9f7 url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80') center/cover;"></div>
+                    <div class="blog-content">
+                        <h3>Comment créer un héritage numérique&nbsp;?</h3>
+                        <p>Conseils pratiques et inspirations pour transmettre vos souvenirs de façon moderne et sécurisée.</p>
+                        <span class="blog-link">Lire l’article →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+    <style>
+
+    
+    /* Commitments Section */
+    .commitments-section {
+        background: #f4f8fb;
+        padding: 4rem 2rem 2.5rem 2rem;
+        border-top: 1px solid #e0e6ed;
+    }
+    .commitments-container {
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    .commitments-badge {
+        display: flex;
+        justify-content: center;
+        gap: 1.2rem;
+        margin-bottom: 1.2rem;
+    }
+    .badge-secure, .badge-fr {
+        display: inline-block;
+        background: var(--gradient);
+        color: #fff;
+        font-weight: 600;
+        border-radius: 30px;
+        padding: 0.5rem 1.3rem;
+        font-size: 1.05rem;
+        box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+        letter-spacing: 0.01em;
+    }
+    .badge-fr {
+        background: #fff;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+    }
+    .commitments-list {
+        list-style: none;
+        margin: 2rem auto 0 auto;
+        padding: 0;
+        text-align: left;
+        max-width: 600px;
+    }
+    .commitments-list li {
+        margin-bottom: 1.1rem;
+        font-size: 1.13rem;
+        background: #fff;
+        border-radius: 10px;
+        padding: 1rem 1.3rem;
+        box-shadow: 0 1px 6px rgba(44,62,80,0.06);
+    }
+
+    /* Comparatif Section */
+    .compare-section {
+        background: #fff;
+        padding: 4rem 2rem 2.5rem 2rem;
+        border-top: 1px solid #e0e6ed;
+    }
+    .compare-table-wrapper {
+        overflow-x: auto;
+        margin: 0 auto;
+        max-width: 900px;
+    }
+    .compare-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #f8f9fa;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(44,62,80,0.07);
+        margin: 0 auto;
+    }
+    .compare-table th, .compare-table td {
+        padding: 1rem 0.7rem;
+        text-align: center;
+        font-size: 1.08rem;
+        border-bottom: 1px solid #e0e6ed;
+    }
+    .compare-table th {
+        background: var(--gradient);
+        color: #fff;
+        font-weight: 700;
+        border-bottom: 2px solid #d1d8e6;
+    }
+    .compare-table tr:last-child td {
+        border-bottom: none;
+    }
+    .compare-table td {
+        background: #f8f9fa;
+    }
+    .compare-table td:first-child {
+        font-weight: 600;
+        color: var(--primary);
+        background: #f4f8fb;
+    }
+
+    /* Blog / Ressources */
+    .blog-section {
+        background: #f8f9fa;
+        padding: 4rem 2rem 3rem 2rem;
+        border-top: 1px solid #e0e6ed;
+    }
+    .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        gap: 2rem;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .blog-card {
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(44,62,80,0.07);
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.18s, box-shadow 0.18s;
+        overflow: hidden;
+    }
+    .blog-card:hover {
+        transform: translateY(-4px) scale(1.025);
+        box-shadow: 0 6px 24px rgba(44,62,80,0.13);
+    }
+    .blog-img {
+        width: 100%;
+        height: 160px;
+        background-size: cover;
+        background-position: center;
+    }
+    .blog-content {
+        padding: 1.2rem 1.1rem 1.1rem 1.1rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .blog-content h3 {
+        font-size: 1.18rem;
+        margin-bottom: 0.6rem;
+        color: var(--primary);
+    }
+    .blog-content p {
+        font-size: 1.04rem;
+        color: #444;
+        margin-bottom: 0.7rem;
+    }
+    .blog-link {
+        color: var(--secondary);
+        font-weight: 600;
+        font-size: 0.98rem;
+        margin-top: auto;
+    }
+    </style>
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Votre histoire mérite d'être éternelle</h2>
+            <p>Commencez dès aujourd'hui à créer un héritage qui touchera les générations futures.</p>
+            <a href="register.html" class="cta-button">Créer mon héritage gratuitement</a>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <h2 class="section-title">FAQ - Vos droits & la sécurité</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question">Qui possède mes données et ma voix&nbsp;?</button>
+                    <div class="faq-answer">Vous restez propriétaire exclusif de vos données, de votre voix et de votre double numérique. HéritageAI n’exploite jamais vos contenus à des fins commerciales ou publicitaires.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Puis-je supprimer mon héritage ou mes enregistrements&nbsp;?</button>
+                    <div class="faq-answer">Oui, vous pouvez supprimer à tout moment l’ensemble de vos données, enregistrements vocaux et souvenirs depuis votre espace personnel. La suppression est immédiate et irréversible.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Qui peut accéder à mon double numérique&nbsp;?</button>
+                    <div class="faq-answer">Seules les personnes que vous autorisez (proches, héritiers) peuvent interagir avec votre double numérique. Vous contrôlez à tout moment les accès et pouvez les révoquer.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Comment mes données sont-elles protégées&nbsp;?</button>
+                    <div class="faq-answer">Toutes vos données sont chiffrées de bout en bout, stockées en France et protégées selon les normes RGPD. Nous ne partageons jamais vos informations avec des tiers.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">L’IA peut-elle être utilisée contre moi&nbsp;?</button>
+                    <div class="faq-answer">Non. Votre IA n’est accessible qu’à vous et vos proches autorisés. Aucun usage externe, commercial ou publicitaire n’est possible sans votre consentement explicite.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Que deviennent mes données après mon décès&nbsp;?</button>
+                    <div class="faq-answer">Vous choisissez à l’avance qui pourra accéder à votre héritage numérique. Vos proches peuvent enrichir votre mémoire, mais ne peuvent jamais usurper votre identité.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Comment contacter le support ou exercer mes droits&nbsp;?</button>
+                    <div class="faq-answer">Notre équipe est disponible par email et chat pour toute question ou demande liée à vos droits, la confidentialité ou la sécurité de vos données.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>HéritageAI</h4>
+                <p>Préservez votre essence pour l'éternité.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Produit</h4>
+                <ul>
+                    <li><a href="#features">Fonctionnalités</a></li>
+                    <li><a href="#pricing">Tarifs</a></li>
+                    <li><a href="#security">Sécurité</a></li>
+                    <li><a href="#api">API</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Entreprise</h4>
+                <ul>
+                    <li><a href="#about">À propos</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#careers">Carrières</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Légal</h4>
+                <ul>
+                    <li><a href="#privacy">Confidentialité</a></li>
+                    <li><a href="#terms">Conditions</a></li>
+                    <li><a href="#gdpr">RGPD</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 HéritageAI. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="js/index.js"></script>
+    <script>
+    // Accordéon FAQ amélioré (masquage total, accessibilité)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.setAttribute('aria-expanded', 'false');
+            btn.addEventListener('click', function() {
+                const answer = this.nextElementSibling;
+                const isOpen = this.getAttribute('aria-expanded') === 'true';
+                document.querySelectorAll('.faq-question').forEach(b => b.setAttribute('aria-expanded','false'));
+                document.querySelectorAll('.faq-answer').forEach(a => {
+                    a.style.maxHeight = '0';
+                    a.style.paddingTop = '0';
+                    a.style.paddingBottom = '0';
+                });
+                if (!isOpen) {
+                    this.setAttribute('aria-expanded','true');
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    answer.style.paddingTop = '0.7rem';
+                    answer.style.paddingBottom = '0.7rem';
+                }
+            });
+        });
+        document.querySelectorAll('.faq-answer').forEach(a => {
+            a.style.overflow = 'hidden';
+            a.style.transition = 'max-height 0.4s cubic-bezier(.4,0,.2,1), padding 0.3s';
+            a.style.maxHeight = '0';
+            a.style.paddingTop = '0';
+            a.style.paddingBottom = '0';
+        });
+    });
+    </script>
+    <style>
+    .faq-section {
+        background: #f8f9fa;
+        padding: 5rem 2rem 3rem 2rem;
+    }
+    .faq-list {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .faq-item {
+        margin-bottom: 1.5rem;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 2px 12px rgba(44,62,80,0.07);
+        padding: 0.5rem 1.2rem;
+    }
+    .faq-question {
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 1.15rem;
+        font-weight: 600;
+        width: 100%;
+        text-align: left;
+        padding: 1.1rem 0;
+        cursor: pointer;
+        outline: none;
+        transition: color 0.2s;
+        position: relative;
+    }
+    .faq-question::after {
+        content: '+';
+        position: absolute;
+        right: 0.7em;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.3em;
+        color: var(--secondary);
+        transition: transform 0.2s;
+    }
+    .faq-answer {
+        font-size: 1.05rem;
+        color: #444;
+        padding: 0 0.2rem;
+        line-height: 1.7;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(.4,0,.2,1), padding 0.3s;
+    }
+    .faq-question[aria-expanded="true"]::after {
+        content: '-';
+        transform: translateY(-50%) rotate(180deg);
+    }
+    </style>
+</body>
+</html>

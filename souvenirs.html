@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Souvenirs - HéritageAI</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #4CAF50;
+            --warning: #ff9800;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+            padding: 2.5rem 2rem 3rem 2rem;
+            margin: 3rem auto;
+        }
+
+        .content-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .header-title p {
+            color: #666;
+        }
+
+        .btn {
+            padding: 1rem 2.2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.10);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.13);
+        }
+
+        .souvenirs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 2.2rem;
+        }
+
+        .souvenir-card {
+            background: #f8f9fa;
+            border-radius: 18px;
+            box-shadow: 0 5px 24px rgba(52, 73, 94, 0.07);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 280px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .souvenir-card:hover {
+            transform: translateY(-7px) scale(1.01);
+            box-shadow: 0 12px 32px rgba(52, 73, 94, 0.13);
+            border-color: var(--secondary);
+        }
+
+        .souvenir-card-header {
+            padding: 1.2rem 1.5rem 0.7rem 1.5rem;
+            background: var(--gradient);
+            color: white;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .souvenir-card-body {
+            padding: 1.5rem;
+            flex: 1;
+            color: var(--dark);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .souvenir-card-footer {
+            padding: 1rem 1.5rem;
+            background: #ecf0f1;
+            font-size: 1rem;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+            border-bottom-left-radius: 18px;
+            border-bottom-right-radius: 18px;
+        }
+
+        .souvenir-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .souvenir-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem 1.5rem;
+            font-size: 0.98rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .souvenir-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .souvenir-tag {
+            background: var(--gradient);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.92rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .souvenir-emotions {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .souvenir-privacy {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 1.1rem;
+            color: var(--secondary);
+            background: #eaf6fb;
+            border-radius: 8px;
+            padding: 0.2rem 0.7rem;
+            margin-left: 0.5rem;
+        }
+
+        .souvenir-content {
+            margin-top: 0.5rem;
+            font-size: 1.08rem;
+            color: #222;
+            word-break: break-word;
+        }
+
+        .souvenir-media {
+            margin-top: 0.7rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+        }
+        .souvenir-media img,
+        .souvenir-media video,
+        .souvenir-media audio {
+            border-radius: 10px;
+            max-width: 120px;
+            max-height: 120px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #888;
+            margin: 4rem 0 2rem 0;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .souvenirs-grid {
+                gap: 1.2rem;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .main-content {
+                padding: 0.5rem;
+            }
+            .header-title h1 {
+                font-size: 2rem;
+            }
+            .souvenirs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+    <div class="main-content">
+        <div class="page-header" style="display:flex;align-items:center;gap:1.5rem;margin-bottom:2rem;">
+            <a href="dashboard.html" class="back-button">
+                <span style="font-size:1.3rem;">←</span> Retour au tableau de bord
+            </a>
+        </div>
+        <div class="content-header">
+            <style>
+
+       
+        /* Bouton retour */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.08rem;
+            border-radius: 8px;
+            padding: 0.5rem 1.2rem;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        .back-button:hover {
+            background: #eaf6fb;
+            color: var(--primary);
+            border-color: var(--secondary);
+            transform: translateX(-5px);
+        }
+             </style>
+            <div class="header-title">
+                <h1>Mes Souvenirs</h1>
+                <p>Retrouvez ici tous les moments que vous avez partagés.</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+                <div class="filter-wrapper">
+                    <select id="filterType" class="filter-select">
+                        <option value="all">Tous types</option>
+                        <option value="photo">Photo</option>
+                        <option value="video">Vidéo</option>
+                        <option value="audio">Audio</option>
+                        <option value="text">Texte</option>
+                        <option value="mixed">Mixte</option>
+                    </select>
+                </div>
+       
+                <style>
+
+                
+        .filter-wrapper {
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
+            padding: 0.2rem 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .filter-select {
+            border: none;
+            background: transparent;
+            font-size: 1.08rem;
+            color: var(--primary);
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            outline: none;
+            font-weight: 500;
+            appearance: none;
+            cursor: pointer;
+            min-width: 140px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .filter-select:focus {
+            background: #eaf6fb;
+            color: var(--secondary);
+        }
+        .filter-select option {
+            color: var(--primary);
+        }
+        </style>
+                <a href="add.html" class="btn">
+                    <span>➕</span> Nouveau souvenir
+                </a>
+            </div>
+        </div>
+        <div id="souvenirsGrid" class="souvenirs-grid">
+            <!-- Les souvenirs seront insérés ici dynamiquement -->
+            <!-- Exemple de carte (sera généré dynamiquement) :
+            <div class="souvenir-card">
+                <div class="souvenir-card-header">
+                    <span class="souvenir-title">Titre du souvenir</span>
+                </div>
+                <div class="souvenir-card-body">
+                    <div class="souvenir-meta">
+                        <span>📅 12/07/2025</span>
+                        <span>📍 Paris</span>
+                        <span class="souvenir-emotions">😊 ❤️</span>
+                        <span class="souvenir-privacy">🔒 Privé</span>
+                    </div>
+                    <div class="souvenir-tags">
+                        <span class="souvenir-tag">Famille</span>
+                        <span class="souvenir-tag">Vacances</span>
+                    </div>
+                    <div class="souvenir-content">Petit texte d’aperçu du souvenir...</div>
+                    <div class="souvenir-media">
+                        <img src="img1.jpg" alt="media">
+                        <video src="video1.mp4" controls></video>
+                    </div>
+                </div>
+                <div class="souvenir-card-footer" style="display:flex;gap:1rem;justify-content:flex-end;align-items:center;">
+                    <button class="btn btn-secondary btn-view">👁️ Voir</button>
+                    <button class="btn btn-secondary btn-edit">✏️ Modifier</button>
+                    <button class="btn btn-secondary btn-delete" style="background:var(--accent);color:white;">🗑️ Supprimer</button>
+                </div>
+            </div>
+            -->
+        </div>
+        <div id="emptyState" class="empty-state" style="display:none;">
+            <p>Aucun souvenir pour l'instant.<br>Ajoutez votre premier souvenir pour commencer à construire votre
+                héritage !</p>
+        </div>
+    </div>
+    <script src="js/auth.js"></script>
+    <script src="js/souvenirs.js"></script>
+</body>
+
+</html>
